@@ -1,0 +1,17 @@
+{
+	"twitter": {
+		"consumer_key": "",
+		"consumer_secret": "",
+		"access_token": "",
+		"access_token_secret": ""
+	},
+	"mysql2": {
+		"host": "localhost",
+		"port": 3306,
+		"dbname": "archive",
+		"tablename": "twitter",
+                "username": "",
+                "password": ""
+	}
+
+}
