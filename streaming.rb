@@ -3,12 +3,12 @@
 require 'twitter'
 
 class StreamClient
-	def initialize(ck, cs, at, ats)
+	def initialize(tokens)
 		@t = Twitter::Streaming::Client.new do |object|
-			object.consumer_key        = ck
-			object.consumer_secret     = cs
-			object.access_token        = at
-			object.access_token_secret = ats
+			object.consumer_key        = tokens['consumer_key']
+			object.consumer_secret     = tokens['consumer_secret']
+			object.access_token        = tokens['access_token']
+			object.access_token_secret = tokens['access_token_secret']
 		end
 	end
 
@@ -30,7 +30,7 @@ class StreamClient
 
 					if tweet.uris?
 						tweet.uris.each { |uri|
-							urls.push("#{uri.expanded_url}")
+							#urls.push("#{uri.expanded_url}")
 							text.gsub!("#{uri.url}", "#{uri.expanded_url}")
 						}
 					end
@@ -46,7 +46,15 @@ class StreamClient
 					"date" => tweet.created_at,
 					"urls" => urls
 				}
-				operation_block.call(res)
+				begin
+					operation_block.call(res)
+				rescue Mysql2::Error => e
+					puts "======================================"
+					puts "Mysql2::Error exception caught. (#{e.to_s})"
+					puts "It seemed to be an encoding exception. (given encoding : #{res['tweet'].encoding})"
+					# XXX: RubyInstaller 2.1.1 encoding issue.
+					#res['tweet'].encode!("UTF-8", "UTF-8", { :invalid => :replace, :undef => :replace, :replace => "?" })
+				end
 			end			
 		end
 	end

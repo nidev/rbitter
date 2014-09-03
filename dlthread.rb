@@ -4,13 +4,15 @@ require "net/http"
 require "openssl"
 
 class DLThread
-  def initialize(dlfolder)
+  def initialize(dlfolder, cacert_path)
     @dest = dlfolder
     if not File.directory?(dlfolder)
       puts "[ Given location is not available for downloading ]"
       puts "[ Will save files on current folder.              ]"
       @dest = "./"
     end
+
+    @cacert = cacert_path
   end
 
   def execute_urls(urls)
@@ -21,15 +23,18 @@ class DLThread
 
   private
   def download_once(url)
+    puts "#{url}"
     download_task = Thread.new {
       uri = URI.parse(url)
       http = Net::HTTP.new(uri.host, uri.port)
       if uri.scheme.downcase == 'https'
         http.use_ssl = true
-        http.ca_file = './cacerts/cacert.pem'
-        http.verify_mode = OpenSSL::SSL::VERIFY_PEER
+        http.ca_path = @cacert_path
+        # XXX: Fix this soon as possible.
+        http.verify_mode = OpenSSL::SSL::VERIFY_NONE
       end
 
+      puts http.ca_file
       http.request_get(uri.path) { |res|
         case res
         when Net::HTTPOK
@@ -50,6 +55,7 @@ class DLThread
     }
 
     download_task.run
+    download_task.join
   end
 end
 

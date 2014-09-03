@@ -12,6 +12,9 @@
 		"tablename": "twitter",
                 "username": "",
                 "password": ""
+	},
+	"media_downloader": {
+		"cacert_path": "cacerts/cacert.pem",
+		"download_dir": "imgs/"
 	}
-
 }

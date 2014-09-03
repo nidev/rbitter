@@ -85,7 +85,7 @@ module Database
 			}
 			query.pop
 			query.push(");")
-			puts query.join(" ")
+			#puts query.join(" ")
 			res = @sql.query(query.join(" "))
 
 		end
