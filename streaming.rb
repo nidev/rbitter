@@ -13,6 +13,20 @@ class StreamClient
 	end
 
 	def run(&operation_block)
+		begin
+			internal(&operation_block)
+		rescue EOFError => e
+			puts "Network unavailable. restart in 3 seconds..."
+			sleep 3
+			retry
+		rescue Exception => e
+			puts "Exception (#{e.inspect})"
+			#Kernel.exit(-1)
+		end
+	end
+
+	private
+	def internal(&operation_block)
 		@t.user do |tweet|
 			if tweet.is_a?(Twitter::Tweet)
 				text = tweet.full_text.gsub(/(\r\n|\n)/, '')
