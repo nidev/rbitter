@@ -21,7 +21,8 @@ class StreamClient
       retry
     rescue Exception => e
       puts "Exception (#{e.inspect})"
-      #Kernel.exit(-1)
+      sleep 3
+      retry
     end
   end
 

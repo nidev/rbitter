@@ -23,7 +23,6 @@ class DLThread
 
   private
   def download_once(url)
-    puts "#{url}"
     download_task = Thread.new {
       uri = URI.parse(url)
       http = Net::HTTP.new(uri.host, uri.port)
@@ -38,24 +37,21 @@ class DLThread
       http.request_get(uri.path) { |res|
         case res
         when Net::HTTPOK
-          puts "<< #{uri.path} being downloaded"
           fname = File.basename(uri.path)
           if fname.nil? or fname.size < 1
             fname = uri.path.gsub(/\//, "_")
           end
-          puts "write into #{fname}"
+          puts "[fetch] remote: #{url} => local: #{fname}"
           File.open(@dest+"/"+fname, "wb") { |file|
             res.read_body { |chunk|
               file.write(chunk)
             }
           }
-          puts "<< #{uri.path} downloaded on #{@dest}"
         end
       }
     }
 
     download_task.run
-    download_task.join
   end
 end
 
