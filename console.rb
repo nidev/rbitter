@@ -2,4 +2,11 @@
 #
 # Rbitter Archive Access console (irb)
 
-# stub
+require "irb"
+
+module Application
+  class Console < IRB
+    ;
+  end
+end
+
