@@ -16,5 +16,11 @@
   "media_downloader": {
     "cacert_path": "cacerts/cacert.pem",
     "download_dir": "imgs/"
+  },
+  "xmlrpc": {
+    "enable": true,
+    "bind_host": "0.0.0.0",
+    "bind_port": 1400,
+    "auth_password": ""
   }
 }
