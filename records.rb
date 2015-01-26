@@ -9,7 +9,7 @@ SCHEME = {
   :userid => :integer,
   :username => :string,
   :tweetid => :integer,
-  :tweet => :string, # with url unpacked
+  :tweet => :text, # with url unpacked
   :date => :datetime,
   :rt_count => :integer,
   :fav_count => :integer
@@ -23,9 +23,11 @@ def init_records_table
         when :string
           t.string column
         when :integer
-          t.integer column
+          t.integer column, :limit => 8
         when :datetime
           t.datetime column
+        when :text
+          t.text column
         else
           puts "Unexpected column type '#{SCHEME[column]}' of #{column}"
         end
