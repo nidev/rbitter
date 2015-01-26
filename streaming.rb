@@ -15,10 +15,8 @@ class StreamClient
   def run(&operation_block)
     begin
       internal(&operation_block)
-    rescue EOFError => e
-      puts "Network unavailable. restart in 3 seconds..."
-      sleep 3
-      retry
+    rescue Interrupt => e
+      puts "^C pressed. Streaming interrupted."
     rescue Exception => e
       puts "Exception (#{e.inspect})"
       sleep 3
