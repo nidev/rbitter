@@ -4,7 +4,6 @@ require "json"
 require "twitter"
 require_relative "records"
 require_relative "streaming"
-require_relative "xmlrpc"
 require_relative "dlthread"
 
 module Application
@@ -27,9 +26,8 @@ module Application
 
   class RecordingServer
     def initialize
-      cl = ConfigLoader.new
+      cl = $cl
       @t = StreamClient.new(cl['twitter'].dup)
-
       if cl['activerecord'] == 'sqlite'
         ActiveRecord::Base.establish_connection(adapter: 'sqlite3', database: cl['sqlite']['dbfile'])
       elsif cl['activerecord'] == 'mysql2'
@@ -73,8 +71,8 @@ module Application
     end
 
     def main_loop
-      write_init_marker
       begin
+        write_init_marker
         @t.run { |a|
           Record.create({:marker => 0,
             :marker_msg => "normal", 
@@ -90,9 +88,14 @@ module Application
           puts "#{a['screen_name']}[R#{a['rt_count']}/F#{a['fav_count']}] #{a['tweet']}"
           @dt.execute_urls(a['urls'])
         }
+      rescue Interrupt => e
+        puts "Interrupted..."
+        exit 0
       rescue Exception => e # TODO: more specifically
-        puts "Exception occured on RecordingServer"
+        puts "Exception occured on RecordingServer. Restart within 3 seconds"
         puts e.inspect
+        sleep 3
+        retry
       ensure
         write_halt_marker
       end
@@ -101,14 +104,22 @@ module Application
 end
 
 if __FILE__ == $0
+  $cl = Application::ConfigLoader.new
+
   if ARGV.length == 0
     main = Application::RecordingServer.new
-    rpc_service_thread = Thread.new {
-      rpc_server = Application::RPCServer.new
-      rpc_server.main_loop
-    }
 
-    rpc_service_thread.run
+    if $cl['xmlrpc']['enable']
+      require_relative "xmlrpc"
+      $rpc_service_thread = Thread.new {
+        rpc_server = Application::RPCServer.new($cl['xmlrpc']['bind_host'], $cl['xmlrpc']['bind_port'])
+        rpc_server.main_loop
+      }
+
+      $rpc_service_thread.abort_on_exception = true
+      $rpc_service_thread.run
+    end
+
     main.main_loop
   elsif ARGV[1] == "--console"
     # initiate console

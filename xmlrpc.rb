@@ -27,7 +27,6 @@ module Application
           if fname.match(/rh_\w+\.rb$/)
             begin
               load fname
-              namespace_length += 1
             rescue Exception => e
               # stub
               puts "Exception while loading #{fname}"

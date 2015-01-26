@@ -13,15 +13,7 @@ class StreamClient
   end
 
   def run(&operation_block)
-    begin
-      internal(&operation_block)
-    rescue Interrupt => e
-      puts "^C pressed. Streaming interrupted."
-    rescue Exception => e
-      puts "Exception (#{e.inspect})"
-      sleep 3
-      retry
-    end
+    internal(&operation_block)
   end
 
   private
