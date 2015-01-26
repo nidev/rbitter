@@ -61,10 +61,9 @@ class StreamClient
         }
         begin
           operation_block.call(res)
-        rescue Mysql2::Error => e
+        rescue Exception => e
           puts "======================================"
-          puts "Mysql2::Error exception caught. (#{e.to_s})"
-          puts "It seemed to be an encoding exception. (given encoding : #{res['tweet'].encoding})"
+          puts "Exception caught. (#{e.to_s})"
           # XXX: RubyInstaller 2.1.1 encoding issue.
           #res['tweet'].encode!("UTF-8", "UTF-8", { :invalid => :replace, :undef => :replace, :replace => "?" })
         end
