@@ -2,3 +2,5 @@ imgs/*.*
 *.json
 cacerts/*.pem
 Gemfile.lock
+*.sqlite
+*.db

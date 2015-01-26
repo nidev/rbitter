@@ -2,16 +2,17 @@
 
 require "json"
 require "twitter"
-require "./database"
-require "./streaming"
-require "./xmlrpc"
-require "./dlthread"
+require_relative "records"
+require_relative "streaming"
+require_relative "xmlrpc"
+require_relative "dlthread"
 
 module Application
   class ConfigLoader
     def initialize(cfg_filename='config.json')
       File.open(cfg_filename, "r") { |file|
         @cfg = JSON.parse(file.read)
+        @cfg.freeze # no modification can be made.
       }
     end
 
@@ -28,17 +29,31 @@ module Application
     def initialize
       cl = ConfigLoader.new
       @t = StreamClient.new(cl['twitter'].dup)
-      @d = Database::DBHandler.new(:host => cl['mysql2']['host'], :port => cl['mysql2']['port'], :dbname => cl['mysql2']['dbname'])
-      @d.link(cl['mysql2']['username'], cl['mysql2']['password'])
-      @d.create_if_not_exists(cl['mysql2']['tablename'])
-      @tablename = cl['mysql2']['tablename']
+
+      if cl['activerecord'] == 'sqlite'
+        ActiveRecord::Base.establish_connection(adapter: 'sqlite3', database: cl['sqlite']['dbfile'])
+      elsif cl['activerecord'] == 'mysql2'
+        ActiveRecord::Base.establish_connection(
+          adapter: 'mysql2',
+          host: cl['mysql2']['host'],
+          port: cl['mysql2']['port'],
+          database: cl['mysql2']['dbname'],
+          username: cl['mysql2']['username'],
+          password: cl['mysql2']['password'])
+      else
+        raise RuntimeException.new("Value of 'activerecord' option can be either sqlite or mysql2.")
+      end
+
+      if not ActiveRecord::Base.connection.table_exists?(:records)
+        puts "First-time running. initiate database table..."
+        init_records_table
+      end
 
       @dt = DLThread.new(cl['media_downloader']['download_dir'], cl['media_downloader']['cacert_path'])
     end
 
     def write_marker(message)
-      @d.insert_into(@tablename, :id => nil,
-        :marker => 1,
+      Record.create({:marker => 1,
         :marker_msg => message, 
         :userid => nil,
         :username => nil,
@@ -46,7 +61,7 @@ module Application
         :tweet => nil,
         :date => nil,
         :rt_count => 0,
-        :fav_count => 0)
+        :fav_count => 0})
     end
 
     def write_init_marker
@@ -59,23 +74,28 @@ module Application
 
     def main_loop
       write_init_marker
-      @t.run { |a|
-        @d.insert_into(@tablename, :id => nil,
-          :marker => 0,
-          :marker_msg => "normal", 
-          :userid => a['userid'],
-          :username => a['screen_name'],
-          :tweetid => a['tweetid'],
-          :tweet => a['tweet'],
-          :date => a['date'],
-          :rt_count => a['rt_count'],
-          :fav_count => a['fav_count'])
-        
-        # Image download
-        puts "#{a['screen_name']}[R#{a['rt_count']}/F#{a['fav_count']}] #{a['tweet']}"
-        @dt.execute_urls(a['urls'])
-      }
-      write_halt_marker
+      begin
+        @t.run { |a|
+          Record.create({:marker => 0,
+            :marker_msg => "normal", 
+            :userid => a['userid'],
+            :username => a['screen_name'],
+            :tweetid => a['tweetid'],
+            :tweet => a['tweet'], # XXX: should be url unpacked
+            :date => a['date'],
+            :rt_count => a['rt_count'],
+            :fav_count => a['fav_count']})
+          
+          # Image download
+          puts "#{a['screen_name']}[R#{a['rt_count']}/F#{a['fav_count']}] #{a['tweet']}"
+          @dt.execute_urls(a['urls'])
+        }
+      rescue Exception => e # TODO: more specifically
+        puts "Exception occured on RecordingServer"
+        puts e.inspect
+      ensure
+        write_halt_marker
+      end
     end
   end
 end
@@ -88,7 +108,7 @@ if __FILE__ == $0
       rpc_server.main_loop
     }
 
-    rpc_service_thread.start
+    rpc_service_thread.run
     main.main_loop
   elsif ARGV[1] == "--console"
     # initiate console
