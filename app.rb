@@ -5,6 +5,8 @@ require "twitter"
 require_relative "records"
 require_relative "streaming"
 require_relative "dlthread"
+require_relative "console"
+require_relative "xmlrpc"
 
 module Application
   class ConfigLoader
@@ -79,7 +81,7 @@ module Application
             :userid => a['userid'],
             :username => a['screen_name'],
             :tweetid => a['tweetid'],
-            :tweet => a['tweet'], # XXX: should be url unpacked
+            :tweet => a['tweet'],
             :date => a['date'],
             :rt_count => a['rt_count'],
             :fav_count => a['fav_count']})
@@ -90,12 +92,17 @@ module Application
         }
       rescue Interrupt => e
         puts "Interrupted..."
-        exit 0
-      rescue Exception => e # TODO: more specifically
-        puts "Exception occured on RecordingServer. Restart within 3 seconds"
-        puts e.inspect
-        sleep 3
+        #exit 0
+      rescue Twitter::Error::Unauthorized => e
+        puts "Please configure your Twitter token on config.json."
+        #exit -1
+      rescue Twitter::Error::ServerError => e
+        puts "Service unavailable now. Retry in 5 second..."
+        sleep 5
         retry
+      rescue Twitter::Error => e
+        puts "Twitter Error: #{e.inspect}"
+        #exit -1
       ensure
         write_halt_marker
       end
@@ -105,32 +112,31 @@ end
 
 if __FILE__ == $0
   $cl = Application::ConfigLoader.new
+  
 
   if ARGV.length == 0
     main = Application::RecordingServer.new
 
     if $cl['xmlrpc']['enable']
-      require_relative "xmlrpc"
       $rpc_service_thread = Thread.new {
+        puts "Initiate thread"
         rpc_server = Application::RPCServer.new($cl['xmlrpc']['bind_host'], $cl['xmlrpc']['bind_port'])
         rpc_server.main_loop
-
         # XXX: XMLRPC::Server installs a trap for catching SIGINT.
         # I don't know why it happens though, after XMLRPC::Server eats SIGINT,
         # Ctrl-C can not function at all. It doesn't interrupt main thread.
         # This is temporal fix and the cause must be cleared soon.
-        puts "RPCServer interrupted. Shutdown Rbitter..."
-        exit 1
       }
-
       $rpc_service_thread.run
     end
 
     main.main_loop
-  elsif ARGV[1] == "--console"
+  elsif ARGV[0] == "console"
     # initiate console
-    ;
-  elsif ARGV[1] == "--retreive-log"
+    puts "Start Rbitter console..."
+    con = Application::Console.new
+    con.start
+  elsif ARGV[0] == "logs"
     # show log in stdout
     ;
   else
