@@ -114,9 +114,15 @@ if __FILE__ == $0
       $rpc_service_thread = Thread.new {
         rpc_server = Application::RPCServer.new($cl['xmlrpc']['bind_host'], $cl['xmlrpc']['bind_port'])
         rpc_server.main_loop
+
+        # XXX: XMLRPC::Server installs a trap for catching SIGINT.
+        # I don't know why it happens though, after XMLRPC::Server eats SIGINT,
+        # Ctrl-C can not function at all. It doesn't interrupt main thread.
+        # This is temporal fix and the cause must be cleared soon.
+        puts "RPCServer interrupted. Shutdown Rbitter..."
+        exit 1
       }
 
-      $rpc_service_thread.abort_on_exception = true
       $rpc_service_thread.run
     end
 
