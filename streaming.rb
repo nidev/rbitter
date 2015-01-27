@@ -51,14 +51,8 @@ class StreamClient
           "date" => tweet.created_at,
           "urls" => urls
         }
-        begin
-          operation_block.call(res)
-        rescue Exception => e
-          puts "======================================"
-          puts "Exception caught. (#{e.to_s})"
-          # XXX: RubyInstaller 2.1.1 encoding issue.
-          #res['tweet'].encode!("UTF-8", "UTF-8", { :invalid => :replace, :undef => :replace, :replace => "?" })
-        end
+        
+        operation_block.call(res)
       end      
     end
   end
