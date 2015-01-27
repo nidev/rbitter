@@ -92,17 +92,16 @@ module Application
         }
       rescue Interrupt => e
         puts "Interrupted..."
-        #exit 0
       rescue Twitter::Error::Unauthorized => e
         puts "Please configure your Twitter token on config.json."
-        #exit -1
+        exit -1
       rescue Twitter::Error::ServerError => e
         puts "Service unavailable now. Retry in 5 second..."
         sleep 5
         retry
       rescue Twitter::Error => e
         puts "Twitter Error: #{e.inspect}"
-        #exit -1
+        exit -1
       ensure
         write_halt_marker
       end
@@ -113,7 +112,6 @@ end
 if __FILE__ == $0
   $cl = Application::ConfigLoader.new
   
-
   if ARGV.length == 0
     main = Application::RecordingServer.new
 
@@ -122,10 +120,6 @@ if __FILE__ == $0
         puts "Initiate thread"
         rpc_server = Application::RPCServer.new($cl['xmlrpc']['bind_host'], $cl['xmlrpc']['bind_port'])
         rpc_server.main_loop
-        # XXX: XMLRPC::Server installs a trap for catching SIGINT.
-        # I don't know why it happens though, after XMLRPC::Server eats SIGINT,
-        # Ctrl-C can not function at all. It doesn't interrupt main thread.
-        # This is temporal fix and the cause must be cleared soon.
       }
       $rpc_service_thread.run
     end

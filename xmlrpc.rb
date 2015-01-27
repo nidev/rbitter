@@ -10,10 +10,38 @@ module RPCHandles
   # intended void module
 end
 
+module XMLRPC
+  # Copy from ruby stdlib 2.2.0
+  class ServerNoTrap < XMLRPC::WEBrickServlet
+    def initialize(port=8080, host="127.0.0.1", maxConnections=4, stdlog=$stdout, audit=true, debug=true, *a)
+      super(*a)
+      require 'webrick'
+      @server = WEBrick::HTTPServer.new(:Port => port, :BindAddress => host, :MaxClients => maxConnections,
+                                        :Logger => WEBrick::Log.new(stdlog))
+      @server.mount("/", self)
+    end
+
+    # Call this after you have added all you handlers to the server.
+    # This method starts the server to listen for XML-RPC requests and answer them.
+    def serve
+      #signals = %w[INT TERM HUP] & Signal.list.keys
+      #signals.each { |signal| trap(signal) { @server.shutdown } }
+
+      @server.start
+    end
+
+    # Stops and shuts the server down.
+    def shutdown
+      @server.shutdown
+    end
+
+  end
+end
+
 module Application
   class RPCServer
     def initialize bind_host, bind_port
-      @rpcd = XMLRPC::Server.new(port=bind_port.to_i, host=bind_host.to_s)
+      @rpcd = XMLRPC::ServerNoTrap.new(port=bind_port.to_i, host=bind_host.to_s)
       load_all_handles
       @rpcd.set_default_handler { |name, *args|
         "Unexpected command #{name} with args #{args.inspect}"
@@ -60,3 +88,4 @@ if __FILE__ == $0
   rpcd.main_loop
 end
 
+    
