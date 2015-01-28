@@ -92,6 +92,13 @@ module Application
         }
       rescue Interrupt => e
         puts "Interrupted..."
+        if $cl['xmlrpc']['enable']
+          puts "Finishing RPCServer"
+          if $rpc_service_thread.alive?
+            $rpc_service_thread.join 10
+          end
+        end
+        exit 0
       rescue Twitter::Error::Unauthorized => e
         puts "Please configure your Twitter token on config.json."
         exit -1
