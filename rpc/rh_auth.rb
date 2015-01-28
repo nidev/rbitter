@@ -3,7 +3,7 @@ require_relative "base"
 module RPCHandles
   attr_accessor :desc
 
-  class Authorization
+  class Authorization < NoAuth
     def initialize
       # should be also printed out to message buffer.
       # Just using 'puts' for dev
