@@ -33,7 +33,6 @@ class DLThread
         http.verify_mode = OpenSSL::SSL::VERIFY_NONE
       end
 
-      puts http.ca_file
       http.request_get(uri.path) { |res|
         case res
         when Net::HTTPOK
