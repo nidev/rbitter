@@ -45,7 +45,7 @@ module RPCHandles
     private
     def relations_to_strings rel
       rel.map { |row|
-        "#{row.username}/#{row.date.to_s}\n#{row.tweet}"
+        "@#{row.username}/#{row.date.to_s}<br/>#{row.tweet}"
       }
     end
   end

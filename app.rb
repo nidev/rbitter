@@ -8,6 +8,8 @@ require_relative "dlthread"
 require_relative "console"
 require_relative "xmlrpc"
 
+VERSION = 0.1
+
 module Application
   class ConfigLoader
     def initialize(cfg_filename='config.json')
@@ -91,11 +93,13 @@ module Application
           @dt.execute_urls(a['urls'])
         }
       rescue Interrupt => e
+        puts ""
         puts "Interrupted..."
         if $cl['xmlrpc']['enable']
           puts "Finishing RPCServer"
           if $rpc_service_thread.alive?
-            $rpc_service_thread.join 10
+            $rpc_service_thread.terminate
+            $rpc_service_thread.join
           end
         end
         exit 0
@@ -116,21 +120,36 @@ module Application
   end
 end
 
+def rbitter_header
+  puts "Rbitter #{VERSION} on #{RUBY_VERSION} (#{RUBY_PLATFORM})"
+end
+
+def rbitter_help_msg  
+  puts "Rbitter is a Twitter streaming archiver, with XMLRPC access."
+  puts "-------"
+  puts "Usage: #{__FILE__} application-mode"
+  puts "application-mode's are:"
+  puts "|- serve  : Launch Rbitter full system (Streaming + Database + XMLRPC)"
+  puts "|- console: Launch console application utilizing XMLRPC"
+  puts "|- help: Show this message"
+  puts "`- logs: Show Rbitter internal logs"
+end
+
 if __FILE__ == $0
   $cl = Application::ConfigLoader.new
   
   if ARGV.length == 0
+    rbitter_header
+  elsif ARGV[0] == "serve"
     main = Application::RecordingServer.new
 
     if $cl['xmlrpc']['enable']
       $rpc_service_thread = Thread.new {
-        puts "Initiate thread"
         rpc_server = Application::RPCServer.new($cl['xmlrpc']['bind_host'], $cl['xmlrpc']['bind_port'])
         rpc_server.main_loop
       }
       $rpc_service_thread.run
     end
-
     main.main_loop
   elsif ARGV[0] == "console"
     # initiate console
@@ -139,8 +158,9 @@ if __FILE__ == $0
     con.start
   elsif ARGV[0] == "logs"
     # show log in stdout
-    ;
+    puts "This feature is in heavy development. Sorry."
   else
-    ; # help message
+    rbitter_header
+    rbitter_help_msg
   end
 end

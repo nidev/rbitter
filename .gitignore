@@ -1,6 +1,7 @@
 imgs/*.*
 *.json
 cacerts/*.pem
-Gemfile.lock
+*.lock
 *.sqlite
 *.db
+*.swp
