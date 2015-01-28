@@ -9,14 +9,33 @@ RPC_PREFIX="rbitter"
 RPC_HANDLE_PATH=File.expand_path("./rpc")
 
 module RPCHandles
-  # intended void module
+  # Override this function will activate authentication feature.
+  # You can write and add RPCHandle. See 'rpc' folder.
+
+  @@auth_pool = nil
+  module_function
+  def auth
+    @@auth_pool
+  end
 end
 
 module XMLRPC
   class HTTPAuthWEBrickServlet < WEBrickServlet
+    def extract_method(methodname, *args)
+      for name, obj in @handler
+        if obj.kind_of? Proc
+          next unless methodname == name
+        else
+          next unless methodname =~ /^#{name}(.+)$/
+          next unless obj.respond_to? $1
+          return obj.method($1)
+        end
+      end
+      nil
+    end
+
     def service(request, response)
-      # XXX:
-      # Taken from xmlrpc/server.rb, will be modified.
+      # Taken from xmlrpc/server.rb
       if @valid_ip
         raise WEBrick::HTTPStatus::Forbidden unless @valid_ip.any? { |ip| request.peeraddr[3] =~ ip }
       end
@@ -40,8 +59,29 @@ module XMLRPC
         raise WEBrick::HTTPStatus::BadRequest
       end
 
-      # TODO: Make a custom 'process' function, To handle Auth/NoAuth
-      resp = process(data)
+      # Originally, process(data) was here.
+      # We need to check whether a method requires authorization.
+      rpc_method_name, rpc_params = parser().parseMethodCall(data)
+      rpc_method = extract_method(rpc_method_name)
+
+      if RPCHandles.auth.nil?
+        resp = handle(rpc_method_name, *rpc_params)
+      else
+        if rpc_method.owner.ancestors.include?(Auth)
+          # Check cookie and check it's valid
+          if request.cookies.size == 1 \
+            and request.cookies[0].name == "auth_key" \
+            and RPCHandles.auth.include?(request.cookies[0].value)
+            resp = handle(rpc_method_name, *rpc_params)
+          else
+            # Permission required
+            raise WEBrick::HTTPStatus::Forbidden
+          end
+        elsif rpc_method.owner.ancestors.include?(NoAuth)
+          resp = handle(rpc_method_name, *rpc_params)
+        end
+      end
+
       if resp.nil? or resp.bytesize <= 0
         raise WEBrick::HTTPStatus::InternalServerError
       end
@@ -55,9 +95,6 @@ module XMLRPC
 end
 
 module Application
-  class NoRPCAccessPermission < Exception
-  end
-
   class RPCServer
     def initialize bind_host, bind_port
       @auth_pool = {} # PairOf { AuthKey => AuthDate }
@@ -112,4 +149,3 @@ if __FILE__ == $0
   rpcd.main_loop
 end
 
-    

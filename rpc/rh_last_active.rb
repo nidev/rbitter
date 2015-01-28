@@ -10,6 +10,10 @@ module RPCHandles
       @desc = RH_INFO.new("last_active", 0.1, "nidev", "Tell when the last record is made.")
       puts @desc.digest
     end
+
+    def last_active
+      Application::Record.last.date.to_s
+    end
   end
 end
 
