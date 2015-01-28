@@ -52,6 +52,10 @@ class StreamClient
           "urls" => urls
         }
         
+        if tweet.retweet?
+          res["rt_count"] = tweet.retweeted_tweet.retweet_count
+          res["fav_count"] = tweet.retweetd_tweet.favorite_count
+        end
         operation_block.call(res)
       end      
     end
