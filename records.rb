@@ -16,31 +16,11 @@ module Application
     :fav_count => :integer
   }
 
-  def init_records_table
-    ActiveRecord::Schema.define {
-      create_table :records do |t|
-        SCHEME.each_key { |column|
-          case SCHEME[column]
-          when :string
-            t.string column
-          when :integer
-            t.integer column, :limit => 8
-          when :datetime
-            t.datetime column
-          when :text
-            t.text column
-          else
-            puts "Unexpected column type '#{SCHEME[column]}' of #{column}"
-          end
-        }
-      end
-    }
-  end
-
   class Record < ActiveRecord::Base
 
   end
 
+  module_function
   def any_to_datetime(obj)
     if obj.is_a?(String)
       # try to parse it

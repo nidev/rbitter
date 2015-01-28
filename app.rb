@@ -54,6 +54,29 @@ module Application
       @dt = DLThread.new(cl['media_downloader']['download_dir'], cl['media_downloader']['cacert_path'])
     end
 
+    def init_records_table
+      # SCHEME is defined at records.rb
+
+      ActiveRecord::Schema.define {
+        create_table :records do |t|
+          SCHEME.each_key { |column|
+            case SCHEME[column]
+            when :string
+              t.string column
+            when :integer
+              t.integer column, :limit => 8
+            when :datetime
+              t.datetime column
+            when :text
+              t.text column
+            else
+              puts "Unexpected column type '#{SCHEME[column]}' of #{column}"
+            end
+          }
+        end
+      }
+    end
+
     def write_marker(message)
       Record.create({:marker => 1,
         :marker_msg => message, 
@@ -164,3 +187,4 @@ if __FILE__ == $0
     rbitter_help_msg
   end
 end
+
