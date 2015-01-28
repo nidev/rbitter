@@ -11,30 +11,14 @@ module RPCHandles
 end
 
 module XMLRPC
-  # Copy from ruby stdlib 2.2.0
-  class ServerNoTrap < XMLRPC::WEBrickServlet
-    def initialize(port=8080, host="127.0.0.1", maxConnections=4, stdlog=$stdout, audit=true, debug=true, *a)
-      super(*a)
-      require 'webrick'
-      @server = WEBrick::HTTPServer.new(:Port => port, :BindAddress => host, :MaxClients => maxConnections,
-                                        :Logger => WEBrick::Log.new(stdlog))
-      @server.mount("/", self)
-    end
-
-    # Call this after you have added all you handlers to the server.
-    # This method starts the server to listen for XML-RPC requests and answer them.
+  class ServerNoTrap < XMLRPC::Server
     def serve
-      #signals = %w[INT TERM HUP] & Signal.list.keys
-      #signals.each { |signal| trap(signal) { @server.shutdown } }
-
       @server.start
     end
 
-    # Stops and shuts the server down.
     def shutdown
       @server.shutdown
     end
-
   end
 end
 
