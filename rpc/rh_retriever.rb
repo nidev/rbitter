@@ -4,19 +4,21 @@ require "active_record"
 module RPCHandles
   attr_accessor :desc
 
-  class Retreiver < Auth
+  class Retriever < Auth
     def initialize
       # should be also printed out to message buffer.
       # Just using 'puts' for dev
-      @desc = RH_INFO.new("retreiver", 0.1, "nidev", "Provide records over XMLRPC")
+      @desc = RH_INFO.new("retriever", 0.1, "nidev", "Provide records over XMLRPC")
       puts @desc.digest
     end
 
-    def include_keyword *words
-      resQueue = Array.new
+    def keywords *words
+      resQueue = ""
       words.each { |word|
-        res = Application::Record.where("tweet LIKE (?)", "%유%")
-        reqQueue += relations_to_strings res
+        res = Application::Record.where("tweet LIKE (?)", "%#{word}%")
+        if not res.nil?
+          reqQueue += relations_to_strings(res)
+        end
       }
       resQueue
     end
