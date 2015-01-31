@@ -33,7 +33,7 @@ module Application
       cl = $cl
       @t = StreamClient.new(cl['twitter'].dup)
       if cl['activerecord'] == 'sqlite'
-        ActiveRecord::Base.establish_connection(adapter: 'sqlite3', database: cl['sqlite']['dbfile'])
+        ActiveRecord::Base.establish_connection(adapter: 'sqlite3', database: cl['sqlite']['dbfile'], timeout: 10000) # On some slow computer.
       elsif cl['activerecord'] == 'mysql2'
         ActiveRecord::Base.establish_connection(
           adapter: 'mysql2',
