@@ -22,11 +22,11 @@ module RPCHandles
 
     def username user
       resQueue = []
-      if not user.start_with?("@")
-        user = "@" + user
+      if user.start_with?("@")
+        user.gsub!(/@/, "")
       end
 
-      res = Application::Record.where(username: user)
+      res = Application::Record.where("username = ?", user)
       if not res.nil? and res.length > 0
         resQueue += relations_to_strings(res)
       end
