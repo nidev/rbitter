@@ -56,8 +56,9 @@ module RPCHandles
 
     private
     def relations_to_strings rel
+      # TODO: Try to serve ORM as-is. Converting to localtime should be done at client side.
       rel.map { |row|
-        "@#{row.username}/#{row.date.to_s}<br/>#{row.tweet}"
+        "@#{row.username}/#{row.date.to_time.localtime.to_s}<br/>#{row.tweet}"
       }
     end
   end
