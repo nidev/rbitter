@@ -13,7 +13,12 @@ module RPCHandles
     end
 
     def last_active
-      Application::Record.last.date.to_s
+      res = Application::Record.last(1)
+      if res.length == 1
+        res[0].date.to_s
+      else
+        ""
+      end
     end
   end
 end

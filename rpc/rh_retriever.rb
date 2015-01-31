@@ -13,10 +13,10 @@ module RPCHandles
     end
 
     def keywords *words
-      resQueue = ""
+      resQueue = []
       words.each { |word|
         res = Application::Record.where("tweet LIKE (?)", "%#{word}%")
-        if not res.nil?
+        if not res.nil? and res.length > 0
           reqQueue += relations_to_strings(res)
         end
       }
