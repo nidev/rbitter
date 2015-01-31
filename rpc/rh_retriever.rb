@@ -21,6 +21,19 @@ module RPCHandles
       resQueue
     end
 
+    def username user
+      resQueue = []
+      if not user.start_with?("@")
+        user = "@" + user
+      end
+
+      res = Application::Record.where(username: user)
+      if not res.nil? and res.length > 0
+        resQueue += relations_to_strings(res)
+      end
+      resQueue
+    end
+
     def within_24h
       res = Application::Record.where(date: (DateTime.now.prev_day..DateTime.now))
       relations_to_strings res
