@@ -50,7 +50,7 @@ module RPCHandles
         from_DateTime, to_DateTime = to_DateTime, from_DateTime
       end
 
-      res = Application::Record.where(date: (DateTime.now.prev_day(2)..DateTime.now))
+      res = Application::Record.where(date: (from_DateTime..to_DateTime))
       relations_to_strings res
     end
 
