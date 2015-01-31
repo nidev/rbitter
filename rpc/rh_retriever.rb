@@ -2,9 +2,8 @@ require_relative "base"
 require "active_record"
 
 module RPCHandles
-  attr_accessor :desc
-
   class Retriever < Auth
+    attr_accessor :desc
     def initialize
       # should be also printed out to message buffer.
       # Just using 'puts' for dev

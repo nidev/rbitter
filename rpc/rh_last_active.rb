@@ -2,9 +2,8 @@ require "date"
 require_relative "base"
 
 module RPCHandles
-  attr_accessor :desc
-
   class LastActiveTime < Auth
+    attr_accessor :desc
     def initialize
       # should be also printed out to message buffer.
       # Just using 'puts' for dev
