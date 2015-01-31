@@ -15,7 +15,7 @@ module RPCHandles
     def initialize
       # should be also printed out to message buffer.
       # Just using 'puts' for dev
-      @desc = RH_INFO.new("auth", 0.1, "nidev", "Rbitter XMLRPC authorization plugin")
+      @desc = RH_INFO.new("auth", 0.2, "nidev", "Rbitter XMLRPC authorization plugin")
       puts @desc.digest
     end
 
