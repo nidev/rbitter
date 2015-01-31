@@ -12,14 +12,12 @@ module RPCHandles
       puts @desc.digest
     end
 
-    def keywords *words
+    def keyword word
       resQueue = []
-      words.each { |word|
-        res = Application::Record.where("tweet LIKE (?)", "%#{word}%")
-        if not res.nil? and res.length > 0
-          reqQueue += relations_to_strings(res)
-        end
-      }
+      res = Application::Record.where("tweet LIKE (?)", "%#{word}%")
+      if not res.nil? and res.length > 0
+        resQueue += relations_to_strings(res)
+      end
       resQueue
     end
 
