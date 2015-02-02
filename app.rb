@@ -43,7 +43,9 @@ module Application
           port: cl['mysql2']['port'],
           database: cl['mysql2']['dbname'],
           username: cl['mysql2']['username'],
-          password: cl['mysql2']['password'])
+          password: cl['mysql2']['password'],
+          encoding: "utf8mb4",
+          collation: "utf8mb4_unicode_ci")
       else
         raise RuntimeException.new("Value of 'activerecord' option can be either sqlite or mysql2.")
       end
@@ -59,8 +61,9 @@ module Application
     def init_records_table
       # SCHEME is defined at records.rb
 
-      ActiveRecord::Schema.define {
-        create_table :records do |t|
+      ActiveRecord::Schema.define(version: 20150202) {
+        # utf8mb4 -> supporting UTF-8 4-byte characters (i.e. Emoji)
+        create_table(:records, { :options => "DEFAULT CHARSET=utf8mb4" }) do |t|
           SCHEME.each_key { |column|
             case SCHEME[column]
             when :string
@@ -114,7 +117,7 @@ module Application
             :fav_count => a['fav_count']})
           
           # Image download
-          puts "#{a['screen_name']}[R#{a['rt_count']}/F#{a['fav_count']}] #{a['tweet']}"
+          #puts "#{a['screen_name']}[R#{a['rt_count']}/F#{a['fav_count']}] #{a['tweet']}"
           @dt.execute_urls(a['urls'])
         }
       rescue Interrupt => e
