@@ -5,7 +5,6 @@ require "date"
 
 module Application
   class Record < ActiveRecord::Base
-    validates :tweetid, uniqueness: true, allow_nil: true 
   end
 end
 
@@ -51,6 +50,8 @@ module ARSupport
           end
         }
       end
+
+      add_index :records, :tweetid, unique: true
     }
   end
 

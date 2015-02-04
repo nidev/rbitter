@@ -70,19 +70,23 @@ module Application
       begin
         write_init_marker
         @t.run { |a|
-          Record.create({:marker => 0,
-            :marker_msg => "normal", 
-            :userid => a['userid'],
-            :username => a['screen_name'],
-            :tweetid => a['tweetid'],
-            :tweet => a['tweet'],
-            :date => a['date'],
-            :rt_count => a['rt_count'],
-            :fav_count => a['fav_count']})
-          
-          # Image download
-          #puts "#{a['screen_name']}[R#{a['rt_count']}/F#{a['fav_count']}] #{a['tweet']}"
-          @dt.execute_urls(a['urls'])
+          begin
+            Record.create({:marker => 0,
+              :marker_msg => "normal", 
+              :userid => a['userid'],
+              :username => a['screen_name'],
+              :tweetid => a['tweetid'],
+              :tweet => a['tweet'],
+              :date => a['date'],
+              :rt_count => a['rt_count'],
+              :fav_count => a['fav_count']})
+            
+            # Image download
+            #puts "#{a['screen_name']}[R#{a['rt_count']}/F#{a['fav_count']}] #{a['tweet']}"
+            @dt.execute_urls(a['urls'])
+          rescue ActiveRecord::RecordNotUnique => e
+            puts "[duplicated] Tweet: #{a['tweet']}"
+          end
         }
       rescue Interrupt => e
         puts ""
