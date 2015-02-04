@@ -5,8 +5,8 @@
     "access_token": "",
     "access_token_secret": ""
   },
-  "activerecord": "sqlite",
-  "sqlite": {
+  "activerecord": "sqlite3",
+  "sqlite3": {
     "dbfile": "rbitter.sqlite"
   },
   "mysql2": {
