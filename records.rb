@@ -17,7 +17,7 @@ module Application
   }
 
   class Record < ActiveRecord::Base
-
+    validates :tweetid, uniqueness: true, allow_nil: true 
   end
 
   module_function
