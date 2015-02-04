@@ -26,6 +26,10 @@ class StreamClient
   def internal(&operation_block)
     @t.user do |tweet|
       if tweet.is_a?(Twitter::Tweet)
+        if tweet.retweet?
+          tweet = tweet.retweeted_tweet
+        end
+
         text = tweet.full_text.gsub(/(\r\n|\n)/, '')
 
         # unpack uris and media links
@@ -58,10 +62,10 @@ class StreamClient
           "urls" => urls
         }
         
-        if tweet.retweet?
-          res["rt_count"] = tweet.retweeted_tweet.retweet_count
-          res["fav_count"] = tweet.retweeted_tweet.favorite_count
-        end
+        #if tweet.retweet?
+        #  res["rt_count"] = tweet.retweeted_tweet.retweet_count
+        #  res["fav_count"] = tweet.retweeted_tweet.favorite_count
+        #end
         operation_block.call(res)
       end      
     end
