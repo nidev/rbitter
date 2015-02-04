@@ -4,6 +4,12 @@ require "active_record"
 require "date"
 
 module Application
+  class Record < ActiveRecord::Base
+    validates :tweetid, uniqueness: true, allow_nil: true 
+  end
+end
+
+module ARSupport
   SCHEME = {
     :marker => :integer, # 0 normal, 2 cut, 1 resume
     :marker_msg => :string, # == 0 success, == 2 w/ message
@@ -16,12 +22,39 @@ module Application
     :fav_count => :integer
   }
 
-  class Record < ActiveRecord::Base
-    validates :tweetid, uniqueness: true, allow_nil: true 
+  module_function
+  def prepared?
+    ActiveRecord::Base.connection.table_exists?(:records)
   end
 
-  module_function
-  def any_to_datetime(obj)
+  def migrate_version new_version
+    # STUB
+  end
+
+  def prepare option_string=""
+    # SCHEME is defined at records.rb
+    ActiveRecord::Schema.define(version: 20150202) {
+      # utf8mb4 -> supporting UTF-8 4-byte characters (i.e. Emoji)
+      create_table(:records, { :options => option_string }) do |t|
+        SCHEME.each_key { |column|
+          case SCHEME[column]
+          when :string
+            t.string column
+          when :integer
+            t.integer column, :limit => 8
+          when :datetime
+            t.datetime column
+          when :text
+            t.text column
+          else
+            puts "Unexpected column type '#{SCHEME[column]}' of #{column}"
+          end
+        }
+      end
+    }
+  end
+
+  def any_to_datestring(obj)
     if obj.is_a?(String)
       # try to parse it
       DateTime.parse(obj).strftime("%Y-%m-%d %H:%M:%S")
