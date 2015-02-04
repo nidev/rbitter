@@ -13,7 +13,13 @@ class StreamClient
   end
 
   def run(&operation_block)
-    internal(&operation_block)
+    begin
+      internal(&operation_block)
+    rescue EOFError => e
+      puts "Network unreachable. Retry in 3 seconds..."
+      sleep 3
+      retry
+    end
   end
 
   private
