@@ -51,7 +51,7 @@ module ARSupport
         }
       end
 
-      add_index :records, :tweetid, unique: true
+      #add_index :records, :tweetid, unique: true
     }
   end
 
