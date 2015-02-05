@@ -1,5 +1,6 @@
 require_relative "base"
 require "active_record"
+require "date"
 
 module RPCHandles
   class Retriever < Auth
@@ -14,6 +15,15 @@ module RPCHandles
     def keyword word
       resQueue = []
       res = Application::Record.where("tweet LIKE (?)", "%#{word}%")
+      if not res.nil? and res.length > 0
+        resQueue += relations_to_strings(res)
+      end
+      resQueue
+    end
+
+    def retweets
+      resQueue = []
+      res = Application::Record.where("rt_count > 0")
       if not res.nil? and res.length > 0
         resQueue += relations_to_strings(res)
       end
@@ -55,10 +65,22 @@ module RPCHandles
     end
 
     private
+    def relative_timestring datetime_obj
+      delta = Time.now - datetime_obj.to_time.localtime
+      if delta < 60
+        "#{delta.round(0)} seconds ago"
+      elsif delta < 3600
+        "#{(delta/60).round(0)} minutes ago"
+      elsif delta < 86400
+        "#{(delta/3600).round(0)} hours ago"
+      else
+        "#{(delta/86400).round(0)} days ago"
+      end
+    end
+
     def relations_to_strings rel
-      # TODO: Try to serve ORM as-is. Converting to localtime should be done at client side.
       rel.map { |row|
-        "@#{row.username}/#{row.date.to_time.localtime.to_s}<br/>#{row.tweet}"
+        "@#{row.username} |#{relative_timestring(row.date)}|RT #{row.rt_count} FAV #{row.fav_count}|<br/>#{row.tweet}"
       }
     end
   end
