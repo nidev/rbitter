@@ -82,7 +82,7 @@ module Application
             :fav_count => a['fav_count']})
           # Image download
           #puts "#{a['screen_name']}[R#{a['rt_count']}/F#{a['fav_count']}] #{a['tweet']}"
-          @dt.execute_urls(a['urls'])
+          @dt.execute_urls(a['media_urls'])
         }
       rescue Interrupt => e
         puts ""

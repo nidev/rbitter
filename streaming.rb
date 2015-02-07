@@ -33,19 +33,23 @@ class StreamClient
         text = tweet.full_text.gsub(/(\r\n|\n)/, '')
 
         # unpack uris and media links
-        urls = Array.new
+        media_urls = Array.new
+        web_urls = Array.new
 
         if tweet.entities?
           if tweet.media?
-            tweet.media.each { |uri|
-              urls.push("#{uri.media_uri_https}")
-              text.gsub!("#{uri.uri}", "#{uri.media_uri_https}")
+            tweet.media.each { |media|
+              media_urls.push("#{media.media_uri_https}")
+              text.gsub!("#{media.url}", "#{media.display_url}")
             }
           end
 
+          text += " "
+          text += media_urls.join(" ")
+
           if tweet.uris?
             tweet.uris.each { |uri|
-              #urls.push("#{uri.expanded_url}")
+              web_urls.push("#{uri.expanded_url}")
               text.gsub!("#{uri.url}", "#{uri.expanded_url}")
             }
           end
@@ -59,13 +63,10 @@ class StreamClient
           "fav_count" => tweet.favorite_count,
           "screen_name" => tweet.user.screen_name,
           "date" => tweet.created_at,
-          "urls" => urls
+          "media_urls" => media_urls,
+          "web_urls" => web_urls
         }
         
-        #if tweet.retweet?
-        #  res["rt_count"] = tweet.retweeted_tweet.retweet_count
-        #  res["fav_count"] = tweet.retweeted_tweet.favorite_count
-        #end
         operation_block.call(res)
       end      
     end
