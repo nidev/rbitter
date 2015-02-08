@@ -10,7 +10,7 @@ require_relative "streaming"
 require_relative "dlthread"
 require_relative "xmlrpc"
 
-module Application
+module Rbitter
   class ArcServer
     def initialize
       @cl = ConfigLoader.new

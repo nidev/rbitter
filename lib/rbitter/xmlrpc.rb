@@ -5,22 +5,8 @@ require "xmlrpc/server"
 require "webrick"
 require_relative "rpc/base"
 
-RPC_PREFIX="rbitter"
-RPC_HANDLE_PATH=File.expand_path("./rpc")
-
-module RPCHandles
-  # Override this function will activate authentication feature.
-  # You can write and add RPCHandle. See 'rpc' folder.
-
-  @@auth_pool = nil
-  module_function
-  def auth
-    @@auth_pool
-  end
-end
-
-module XMLRPC
-  class HTTPAuthWEBrickServlet < WEBrickServlet
+module Rbitter
+  class HTTPAuthXMLRPCServer < WEBrickServlet
     def extract_method(methodname, *args)
       for name, obj in @handler
         if obj.kind_of? Proc
@@ -79,6 +65,8 @@ module XMLRPC
           end
         elsif rpc_method.owner.ancestors.include?(NoAuth)
           resp = handle(rpc_method_name, *rpc_params)
+        else
+          raise WEBrick::HTTPStatus::Forbidden
         end
       end
 
@@ -94,13 +82,27 @@ module XMLRPC
   end
 end
 
-module Application
+module Rbitter
+  RPC_PREFIX="rbitter"
+  RPC_HANDLE_PATH=File.expand_path("./rpc")
+
+  module RPCHandles
+    # Override this function will activate authentication feature.
+    # You can write and add RPCHandle. See 'rpc' folder.
+
+    @@auth_pool = nil
+    module_function
+    def auth
+      @@auth_pool
+    end
+  end
+
   class RPCServer
     def initialize bind_host, bind_port
       @auth_pool = {} # PairOf { AuthKey => AuthDate }
 
       @server = WEBrick::HTTPServer.new(:Port => bind_port.to_i, :BindAddress => bind_host.to_s, :MaxClients => 4, :Logger => WEBrick::Log.new($stdout))
-      @core = XMLRPC::HTTPAuthWEBrickServlet.new
+      @core = XMLRPC::HTTPAuthXMLRPCServer.new
       load_all_handles
       @core.set_default_handler { |name, *args|
         "NO_COMMAND: #{name} with args #{args.inspect}"
@@ -145,7 +147,7 @@ end
 
 if __FILE__ == $0
   puts "Local testing server starts..."
-  rpcd = Application::RPCServer.new('127.0.0.1', 1300)
+  rpcd = Rbitter::RPCServer.new('127.0.0.1', 1300)
   rpcd.main_loop
 end
 

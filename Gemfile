@@ -1,5 +1,7 @@
 source "https://rubygems.org"
 
+gemspec
+
 gem 'json'
 gem 'twitter'
 gem 'activerecord'

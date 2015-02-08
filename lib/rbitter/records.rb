@@ -3,7 +3,7 @@
 require "active_record"
 require "date"
 
-module Application
+module Rbitter
   class Record < ActiveRecord::Base
   end
 end

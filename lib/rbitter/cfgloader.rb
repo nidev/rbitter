@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-module Application
+module Rbitter
   class ConfigLoader
     def initialize(cfg_filename='config.json')
       File.open(cfg_filename, "r") { |file|
