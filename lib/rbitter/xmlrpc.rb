@@ -6,7 +6,7 @@ require "webrick"
 require_relative "rpc/base"
 
 module Rbitter
-  class HTTPAuthXMLRPCServer < WEBrickServlet
+  class HTTPAuthXMLRPCServer < XMLRPC::WEBrickServlet
     def extract_method(methodname, *args)
       for name, obj in @handler
         if obj.kind_of? Proc

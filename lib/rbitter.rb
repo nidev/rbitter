@@ -4,6 +4,7 @@
 require "rbitter/version"
 require "rbitter/arcserver"
 require "rbitter/cfgloader"
+require "rbitter/console"
 
 module Rbitter
   # Your code goes here...
@@ -41,8 +42,6 @@ module Rbitter
       main.main_loop
     elsif ARGV[0] == "console"
       # initiate console
-      require_relative "console"
-
       puts "Start Rbitter console..."
       con = Rbitter::Console.new
       con.start

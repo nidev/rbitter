@@ -6,14 +6,14 @@ RH_INFO = Struct.new("RPCHANDLE_INFO", :name, :version, :author, :description) {
 
 # If a handler doesn't require an authorization, please inherit below class
 class NoAuth < Object
-  def auth?
+  def self.auth?
     false
   end
 end
 
 # If a handler does require an authorization, please inherit below class
 class Auth < Object
-  def auth?
+  def self.auth?
     true
   end
 end

@@ -4,11 +4,11 @@ require "json"
 require "date"
 require "twitter"
 
-require_relative "cfgloader"
-require_relative "records"
-require_relative "streaming"
-require_relative "dlthread"
-require_relative "xmlrpc"
+require "rbitter/cfgloader"
+require "rbitter/records"
+require "rbitter/streaming"
+require "rbitter/dlthread"
+require "rbitter/xmlrpc"
 
 module Rbitter
   class ArcServer
