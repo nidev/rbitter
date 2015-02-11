@@ -1,4 +1,7 @@
 # encoding: utf-8
-#
 
-# Test routines will be here
+describe Rbitter do
+  it 'Rbitter is a module' do
+    expect(Rbitter.class === Module).to be(true)
+  end
+end
