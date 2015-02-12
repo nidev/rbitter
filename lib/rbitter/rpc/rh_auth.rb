@@ -20,8 +20,7 @@ module RPCHandles
     end
 
     def auth userid, password
-      conf = Application::ConfigLoader.new
-      if conf['auth'][0] == userid and conf['auth'][1] == password
+      if Rbitter.env['auth'][0] == userid and Rbitter.env['auth'][1] == password
         token = "#{userid}%45#{userid.hash.abs.to_s}"
         # TODO: Time limit?
         RPCHandles.auth[token] = DateTime.now
