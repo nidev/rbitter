@@ -1,34 +1,34 @@
 module Rbitter
   DEFAULT_CONFIG_JSON = <<-ENDOFJSON
 {
-"twitter": {
-  "consumer_key": "",
-  "consumer_secret": "",
-  "access_token": "",
-  "access_token_secret": ""
-},
-"activerecord": "sqlite3",
-"sqlite3": {
-  "dbfile": "rbitter.sqlite"
-},
-"mysql2": {
-  "host": "localhost",
-  "port": 3306,
-  "dbname": "archive",
-  "username": "",
-  "password": ""
-},
-"media_downloader": {
-  "cacert_path": "cacerts/cacert.pem",
-  "download_dir": "imgs/"
-},
-"xmlrpc": {
-  "enable": true,
-  "bind_host": "0.0.0.0",
-  "bind_port": 1400,
-  "auth_password": ""
-},
-"auth": ["username", "password"]
+  "twitter": {
+    "consumer_key": "",
+    "consumer_secret": "",
+    "access_token": "",
+    "access_token_secret": ""
+  },
+  "activerecord": "sqlite3",
+  "sqlite3": {
+    "dbfile": "rbitter.sqlite"
+  },
+  "mysql2": {
+    "host": "localhost",
+    "port": 3306,
+    "dbname": "archive",
+    "username": "",
+    "password": ""
+  },
+  "media_downloader": {
+    "cacert_path": "cacerts/cacert.pem",
+    "download_dir": "imgs/"
+  },
+  "xmlrpc": {
+    "enable": true,
+    "bind_host": "0.0.0.0",
+    "bind_port": 1400,
+    "auth_password": ""
+  },
+  "auth": ["username", "password"]
 }
 ENDOFJSON
 end

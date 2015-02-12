@@ -48,7 +48,7 @@ module Rbitter
     elsif ARGV[0] == "configure"
       require "rbitter/default/config_json"
       puts "Writing config.json now"
-      open(File.join(Dir.pwd, "config.json", "w")) { |io|
+      open(File.join(Dir.pwd, "config.json"), "w") { |io|
         io.write(DEFAULT_CONFIG_JSON)
       }
 
