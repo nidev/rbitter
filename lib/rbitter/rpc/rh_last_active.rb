@@ -12,7 +12,7 @@ module RPCHandles
     end
 
     def last_active
-      res = Application::Record.last(1)
+      res = Rbitter::Record.last(1)
       if res.length == 1
         res[0].date.to_s
       else

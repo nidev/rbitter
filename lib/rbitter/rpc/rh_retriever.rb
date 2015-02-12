@@ -14,7 +14,7 @@ module RPCHandles
 
     def keyword word
       resQueue = []
-      res = Application::Record.where("tweet LIKE (?)", "%#{word}%")
+      res = Rbitter::Record.where("tweet LIKE (?)", "%#{word}%")
       if not res.nil? and res.length > 0
         resQueue += relations_to_strings(res)
       end
@@ -23,7 +23,7 @@ module RPCHandles
 
     def retweets
       resQueue = []
-      res = Application::Record.where("rt_count > 0")
+      res = Rbitter::Record.where("rt_count > 0")
       if not res.nil? and res.length > 0
         resQueue += relations_to_strings(res)
       end
@@ -36,7 +36,7 @@ module RPCHandles
         user.gsub!(/@/, "")
       end
 
-      res = Application::Record.where("username = ?", user)
+      res = Rbitter::Record.where("username = ?", user)
       if not res.nil? and res.length > 0
         resQueue += relations_to_strings(res)
       end
@@ -44,12 +44,12 @@ module RPCHandles
     end
 
     def within_24h
-      res = Application::Record.where(date: (DateTime.now.prev_day..DateTime.now))
+      res = Rbitter::Record.where(date: (DateTime.now.prev_day..DateTime.now))
       relations_to_strings res
     end
 
     def within_3days
-      res = Application::Record.where(date: (DateTime.now.prev_day(2)..DateTime.now))
+      res = Rbitter::Record.where(date: (DateTime.now.prev_day(2)..DateTime.now))
       relations_to_strings res
     end
 
@@ -60,7 +60,7 @@ module RPCHandles
         from_DateTime, to_DateTime = to_DateTime, from_DateTime
       end
 
-      res = Application::Record.where(date: (from_DateTime..to_DateTime))
+      res = Rbitter::Record.where(date: (from_DateTime..to_DateTime))
       relations_to_strings res
     end
 
