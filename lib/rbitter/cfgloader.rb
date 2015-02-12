@@ -19,7 +19,7 @@ module Rbitter
     true
   end
 
-  def config_initialize path=nil
+  def config_initialize json_path=nil
     @internal_configuration = JSON.parse("{}")
 
     unless json_path.nil?
