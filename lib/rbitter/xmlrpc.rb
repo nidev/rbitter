@@ -82,27 +82,27 @@ module Rbitter
   end
 end
 
+module RPCHandles
+  # Override this function will activate authentication feature.
+  # You can write and add RPCHandle. See 'rpc' folder.
+
+  @@auth_pool = nil
+  module_function
+  def auth
+    @@auth_pool
+  end
+end
+
 module Rbitter
   RPC_PREFIX="rbitter"
-  RPC_HANDLE_PATH=File.expand_path("./rpc")
-
-  module RPCHandles
-    # Override this function will activate authentication feature.
-    # You can write and add RPCHandle. See 'rpc' folder.
-
-    @@auth_pool = nil
-    module_function
-    def auth
-      @@auth_pool
-    end
-  end
+  RPC_HANDLE_PATH=File.expand_path("../rpc", __FILE__)
 
   class RPCServer
     def initialize bind_host, bind_port
       @auth_pool = {} # PairOf { AuthKey => AuthDate }
 
       @server = WEBrick::HTTPServer.new(:Port => bind_port.to_i, :BindAddress => bind_host.to_s, :MaxClients => 4, :Logger => WEBrick::Log.new($stdout))
-      @core = XMLRPC::HTTPAuthXMLRPCServer.new
+      @core = HTTPAuthXMLRPCServer.new
       load_all_handles
       @core.set_default_handler { |name, *args|
         "NO_COMMAND: #{name} with args #{args.inspect}"
