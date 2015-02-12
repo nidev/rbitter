@@ -11,8 +11,7 @@ module RPCHandles
       @desc = RH_INFO.new("imghost", "0.1", "nidev", "Host images downloaded from Tweets.")
       puts @desc.digest
 
-      conf = Application::ConfigLoader.new
-      @imgroot = File.expand_path(conf['media_downloader']['download_dir'])
+      @imgroot = File.expand_path(Rbitter.env['media_downloader']['download_dir'])
     end
 
     def image link_or_filename

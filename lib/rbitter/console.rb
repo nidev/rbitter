@@ -4,7 +4,7 @@
 
 require "xmlrpc/client"
 
-module Application
+module Rbitter
   class Console
     def initialize
       ;

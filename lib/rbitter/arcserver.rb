@@ -4,16 +4,15 @@ require "json"
 require "date"
 require "twitter"
 
-require_relative "cfgloader"
-require_relative "records"
-require_relative "streaming"
-require_relative "dlthread"
-require_relative "xmlrpc"
+require "rbitter/records"
+require "rbitter/streaming"
+require "rbitter/dlthread"
+require "rbitter/xmlrpc"
 
-module Application
+module Rbitter
   class ArcServer
     def initialize
-      @cl = ConfigLoader.new
+      @cl = Rbitter.env
 
       @t = StreamClient.new(@cl['twitter'].dup)
       if @cl['activerecord'] == 'sqlite3'
