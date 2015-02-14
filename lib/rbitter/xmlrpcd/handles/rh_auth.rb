@@ -10,7 +10,7 @@ module RPCHandles
     @@auth_pool
   end
   
-  class Authentication < NoAuth
+  class Authentication < BaseHandle::NoAuth
     attr_accessor :desc
     def initialize
       # should be also printed out to message buffer.

@@ -1,7 +1,7 @@
 require_relative "base"
 
 module RPCHandles
-  class Echo < Auth
+  class Echo < BaseHandle::Auth
     attr_accessor :desc
     def initialize
       # should be also printed out to message buffer.

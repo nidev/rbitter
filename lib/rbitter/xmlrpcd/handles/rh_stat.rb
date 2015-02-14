@@ -1,7 +1,7 @@
 require_relative "base"
 
 module RPCHandles
-  class Statistics < Auth
+  class Statistics < BaseHandle::Auth
     attr_accessor :desc
     def initialize
       # should be also printed out to message buffer.

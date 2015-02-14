@@ -3,7 +3,7 @@ require "active_record"
 require "date"
 
 module RPCHandles
-  class Retriever < Auth
+  class Retriever < BaseHandle::Auth
     attr_accessor :desc
     def initialize
       # should be also printed out to message buffer.

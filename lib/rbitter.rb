@@ -3,8 +3,9 @@
 
 require "rbitter/version"
 require "rbitter/arcserver"
-require "rbitter/cfgloader"
+require "rbitter/env"
 require "rbitter/console"
+require "rbitter/xmlrpc"
 
 module Rbitter
   # Your code goes here...

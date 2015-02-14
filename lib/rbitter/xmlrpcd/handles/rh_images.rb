@@ -5,7 +5,7 @@ require "base64"
 require_relative "base"
 
 module RPCHandles
-  class ImageHost < Auth
+  class ImageHost < BaseHandle::Auth
     attr_accessor :desc
     def initialize
       @desc = RH_INFO.new("imghost", "0.1", "nidev", "Host images downloaded from Tweets.")
