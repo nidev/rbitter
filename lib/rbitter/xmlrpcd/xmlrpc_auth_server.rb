@@ -2,6 +2,7 @@
 #
 
 require "rbitter/xmlrpcd/rpchandles"
+require "rbitter/xmlrpcd/handles/base"
 require "xmlrpc/server"
 require "webrick"
 
@@ -53,7 +54,7 @@ module XMLRPC
       if RPCHandles.auth.nil?
         resp = handle(rpc_method_name, *rpc_params)
       else
-        if rpc_method.owner.ancestors.include?(Auth)
+        if rpc_method.owner.ancestors.include?(RPCHandles::BaseModule::Auth)
           # Check cookie and check it's valid
           if request.cookies.size == 1 \
             and request.cookies[0].name == "auth_key" \
@@ -63,7 +64,7 @@ module XMLRPC
             # Permission required
             raise WEBrick::HTTPStatus::Forbidden
           end
-        elsif rpc_method.owner.ancestors.include?(NoAuth)
+        elsif rpc_method.owner.ancestors.include?(RPCHandles::BaseModule::NoAuth)
           resp = handle(rpc_method_name, *rpc_params)
         else
           raise WEBrick::HTTPStatus::Forbidden
