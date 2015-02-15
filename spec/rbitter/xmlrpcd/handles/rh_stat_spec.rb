@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-require "rbitter/rpc/rh_stat"
+require "rbitter/xmlrpcd/handles/rh_stat"
 
 describe RPCHandles::Statistics do
   it 'responds to ::auth?' do

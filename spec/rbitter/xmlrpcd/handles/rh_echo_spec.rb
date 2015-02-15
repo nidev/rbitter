@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-require "rbitter/rpc/rh_echo"
+require "rbitter/xmlrpcd/handles/rh_echo"
 
 describe RPCHandles::Echo do
   it 'responds to ::auth?' do

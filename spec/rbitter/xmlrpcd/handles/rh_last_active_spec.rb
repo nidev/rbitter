@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-require "rbitter/rpc/rh_last_active"
+require "rbitter/xmlrpcd/handles/rh_last_active"
 
 describe RPCHandles::LastActiveTime do
   it 'responds to ::auth?' do

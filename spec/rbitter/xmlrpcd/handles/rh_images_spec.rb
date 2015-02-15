@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-require "rbitter/rpc/rh_images"
+require "rbitter/xmlrpcd/handles/rh_images"
 
 describe RPCHandles::ImageHost do
   it 'responds to ::auth?' do

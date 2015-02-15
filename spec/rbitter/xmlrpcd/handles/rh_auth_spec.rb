@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-require "rbitter/rpc/rh_auth"
+require "rbitter/xmlrpcd/handles/rh_auth"
 
 describe RPCHandles::Authentication do
   it 'responds to ::auth?' do
