@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["nidev.plontra@gmail.com"]
   spec.summary       = %q{Rbitter is a Twitter client specialized in archiving}
   spec.description   = %q{Rbitter archives all tweets appeared on user streaming using ActiveRecord. XMLRPC is used to serve archived tweets and useful features}
-  spec.homepage      = ""
+  spec.homepage      = "https://github.com/nidev/rbitter"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
