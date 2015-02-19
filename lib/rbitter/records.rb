@@ -26,6 +26,26 @@ module ARSupport
     ActiveRecord::Base.connection.table_exists?(:records)
   end
 
+  def connect_database
+    if Rbitter.env['activerecord'] == 'sqlite3'
+      puts "Warning: If you enable XMLRPC access, using sqlite is not recommended."
+      puts "Warning: Random crash can happen because of concurrency."
+      ActiveRecord::Base.establish_connection(adapter: 'sqlite3', database: Rbitter.env['sqlite3']['dbfile'], timeout: 10000) # On some slow computer.
+    elsif Rbitter.env['activerecord'] == 'mysql2'
+      ActiveRecord::Base.establish_connection(
+        adapter: 'mysql2',
+        host: Rbitter.env['mysql2']['host'],
+        port: Rbitter.env['mysql2']['port'],
+        database: Rbitter.env['mysql2']['dbname'],
+        username: Rbitter.env['mysql2']['username'],
+        password: Rbitter.env['mysql2']['password'],
+        encoding: "utf8mb4",
+        collation: "utf8mb4_unicode_ci")
+    else
+      raise RuntimeException.new("Unknown configuration value. 'activerecord' value should be sqlite3 or mysql2.")
+    end
+  end
+
   def migrate_version new_version
     # STUB
   end

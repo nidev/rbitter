@@ -27,15 +27,15 @@ module Rbitter
   end
 
   def self.bootstrap
+    Rbitter.config_initialize
+    if Rbitter.env.empty?
+      puts "No configuration available. Re-bootstrap with 'configure' command line argument."
+      exit -1
+    end
+
     if ARGV.length == 0
       rbitter_header
     elsif ARGV[0] == "serve"
-      Rbitter.config_initialize
-      if Rbitter.env.empty?
-        puts "No configuration available. Re-bootstrap with 'configure' command line argument."
-        exit -1
-      end
-
       main = Rbitter::ArcServer.new
 
       if env['xmlrpc']['enable']
@@ -52,7 +52,6 @@ module Rbitter
       open(File.join(Dir.pwd, "config.json"), "w") { |io|
         io.write(DEFAULT_CONFIG_JSON)
       }
-
       puts "Writing finished"
       puts "You can move config.json one of these locations:"
       puts "[1] $HOME/config.json"
@@ -62,10 +61,7 @@ module Rbitter
       puts "For 3 and 4, you have to be in same folder to launch Rbitter."
       exit 0
     elsif ARGV[0] == "console"
-      # initiate console
-      puts "Start Rbitter console..."
-      con = Rbitter::Console.new
-      con.start
+      Ripl.start :binding => Rbitter::Console.instance_eval{ binding }
     elsif ARGV[0] == "logs"
       # show log in stdout
       puts "This feature is in heavy development. Sorry."

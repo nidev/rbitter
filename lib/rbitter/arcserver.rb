@@ -12,37 +12,19 @@ require "rbitter/xmlrpc"
 module Rbitter
   class ArcServer
     def initialize
-      @cl = Rbitter.env
-
-      @t = StreamClient.new(@cl['twitter'].dup)
-      if @cl['activerecord'] == 'sqlite3'
-        puts "Warning: If you enable XMLRPC access, using sqlite is not recommended."
-        puts "Warning: Random crash can happen because of concurrency."
-        ActiveRecord::Base.establish_connection(adapter: 'sqlite3', database: @cl['sqlite3']['dbfile'], timeout: 10000) # On some slow computer.
-      elsif @cl['activerecord'] == 'mysql2'
-        ActiveRecord::Base.establish_connection(
-          adapter: 'mysql2',
-          host: @cl['mysql2']['host'],
-          port: @cl['mysql2']['port'],
-          database: @cl['mysql2']['dbname'],
-          username: @cl['mysql2']['username'],
-          password: @cl['mysql2']['password'],
-          encoding: "utf8mb4",
-          collation: "utf8mb4_unicode_ci")
-      else
-        raise RuntimeException.new("Unknown configuration value. 'activerecord' value should be sqlite3 or mysql2.")
-      end
+      ARSupport.connect_database
 
       if not ARSupport.prepared?
         puts "Initiate database table..."
-        if @cl['activerecord'] == 'mysql2'
+        if env['activerecord'] == 'mysql2'
           ARSupport.prepare "DEFAULT CHARSET=utf8mb4"
         else
           ARSupport.prepare
         end
       end
 
-      @dt = DLThread.new(@cl['media_downloader']['download_dir'], @cl['media_downloader']['cacert_path'])
+      @t = StreamClient.new(env['twitter'].dup)
+      @dt = DLThread.new(env['media_downloader']['download_dir'], env['media_downloader']['cacert_path'])
     end
 
     def write_marker(message)
@@ -86,7 +68,7 @@ module Rbitter
       rescue Interrupt => e
         puts ""
         puts "Interrupted..."
-        if @cl['xmlrpc']['enable']
+        if env['xmlrpc']['enable']
           puts "Finishing RPCServer"
           if $rpc_service_thread.alive?
             $rpc_service_thread.terminate
