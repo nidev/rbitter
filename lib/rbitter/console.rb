@@ -51,6 +51,10 @@ module Rbitter
         puts "Authentication failed. Check your config.json"
       end
     end
+
+    def start
+      Ripl.start :binding => binding
+    end
   end
 end
 

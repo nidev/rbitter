@@ -61,6 +61,8 @@ module Rbitter
       puts "For 3 and 4, you have to be in same folder to launch Rbitter."
       exit 0
     elsif ARGV[0] == "console"
+      con = Rbitter::Console.new
+      con.start
       Ripl.start :binding => Rbitter::Console.instance_eval{ binding }
     elsif ARGV[0] == "logs"
       # show log in stdout
