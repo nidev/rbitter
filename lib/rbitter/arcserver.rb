@@ -16,15 +16,15 @@ module Rbitter
 
       if not ARSupport.prepared?
         puts "Initiate database table..."
-        if env['activerecord'] == 'mysql2'
+        if Rbitter.env['activerecord'] == 'mysql2'
           ARSupport.prepare "DEFAULT CHARSET=utf8mb4"
         else
           ARSupport.prepare
         end
       end
 
-      @t = StreamClient.new(env['twitter'].dup)
-      @dt = DLThread.new(env['media_downloader']['download_dir'], env['media_downloader']['cacert_path'])
+      @t = StreamClient.new(Rbitter.env['twitter'].dup)
+      @dt = DLThread.new(Rbitter.env['media_downloader']['download_dir'], Rbitter.env['media_downloader']['cacert_path'])
     end
 
     def write_marker(message)
@@ -68,7 +68,7 @@ module Rbitter
       rescue Interrupt => e
         puts ""
         puts "Interrupted..."
-        if env['xmlrpc']['enable']
+        if Rbitter.env['xmlrpc']['enable']
           puts "Finishing RPCServer"
           if $rpc_service_thread.alive?
             $rpc_service_thread.terminate

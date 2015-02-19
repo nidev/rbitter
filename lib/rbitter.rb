@@ -28,7 +28,7 @@ module Rbitter
 
   def self.bootstrap
     Rbitter.config_initialize
-    if Rbitter.env.empty?
+    if env.empty?
       puts "No configuration available. Re-bootstrap with 'configure' command line argument."
       exit -1
     end
@@ -63,7 +63,6 @@ module Rbitter
     elsif ARGV[0] == "console"
       con = Rbitter::Console.new
       con.start
-      Ripl.start :binding => Rbitter::Console.instance_eval{ binding }
     elsif ARGV[0] == "logs"
       # show log in stdout
       puts "This feature is in heavy development. Sorry."
