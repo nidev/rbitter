@@ -51,7 +51,7 @@ See XMLRPC.md
 * XMLRPC
   * Receiving direct messages
 
-## Issue report or feature request ##.
+## Issue report or feature request ##
 It's recommended to open an issue even it seemed too small. A small flaw may result in instability or bad situation. So every feature requests/bug reports are welcomed.
 
 Please attach stack trace, Ruby version, and detail description.
