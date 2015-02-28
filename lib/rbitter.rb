@@ -8,8 +8,6 @@ require "rbitter/console"
 require "rbitter/xmlrpc"
 
 module Rbitter
-  # Your code goes here...
-  #
   def self.rbitter_header
     puts "Rbitter #{VERSION} on Ruby-#{RUBY_VERSION} (#{RUBY_PLATFORM})"
   end
@@ -26,8 +24,33 @@ module Rbitter
     puts "`- logs     : Show Rbitter internal logs"
   end
 
-  def self.bootstrap
+  def self.prebootstrap
     Rbitter.config_initialize
+
+    # Due to stalled socket problem, If unpatched twitter gem is installed.
+    # Twitter::Streaming::Connection will be monkey-patched.
+    patch_required = false
+
+    if Twitter::Version.const_defined?(:MAJOR)
+      b5_version = Twitter::Version::MAJOR * 10000
+      + Twitter::Version::MINOR * 100 + Twitter::Version::PATCH
+      if b5_version <= 51400
+        warn " --> WARN: Monkey-patching Twitter::Streaming::Connection..."
+        patch_required = true
+      end
+    else
+      b6_version = Twitter::Version.to_a
+      if b6_version[0] <= 6 and b6_version[1] <= 0 and b6_version[2] <= 0
+        patch_required = true
+      end
+    end
+
+    require "rbitter/libtwitter_connection_override" if patch_required
+  end
+
+  def self.bootstrap
+    prebootstrap
+
     if env.empty?
       puts "No configuration available. Re-bootstrap with 'configure' command line argument."
       exit -1

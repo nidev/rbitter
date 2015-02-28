@@ -57,7 +57,8 @@ module Rbitter
     end
 
     if @internal_configuration.empty?
-      puts "Can not load any configuration in [#{locations.join(', ')}]"
+      # TODO: New exception class
+      fail StandardError, "Can not load any configuration in [#{locations.join(', ')}]"
     end
   end
 end
