@@ -9,19 +9,20 @@ module Rbitter
   class Console
     def initialize
       puts "Welcome to Rbitter console"
+      help
     end
 
     def help
       puts "Predefined methods:"
       puts "help - to show this message again"
       puts "xmlrpc - to utilize xmlrpc"
-      puts "activerec - to connect and utilize Rbitter::Record ActiveRecord"
+      puts "activerec - to connect and utilize Rbitter::Record"
       puts "^D, 'exit' - to get out from here."
     end
 
     def activerec
       ARSupport.connect_database
-      puts "ActiveRecord::Record is ready."
+      puts "Rbitter::Record is ready."
     end
 
     def exit
