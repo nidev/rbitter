@@ -4,6 +4,8 @@ require "date"
 
 module RPCHandles
   class Retriever < BaseHandle::Auth
+    MAXIMUM_TWEETS = 200
+
     attr_accessor :desc
     def initialize
       # should be also printed out to message buffer.
@@ -14,7 +16,7 @@ module RPCHandles
 
     def keyword word
       resQueue = []
-      res = Rbitter::Record.where("tweet LIKE (?)", "%#{word}%")
+      res = Rbitter::Record.where("tweet LIKE (?)", "%#{word}%").limit(MAXIMUM_TWEETS)
       if not res.nil? and res.length > 0
         resQueue += relations_to_strings(res)
       end
@@ -23,7 +25,7 @@ module RPCHandles
 
     def retweets
       resQueue = []
-      res = Rbitter::Record.where("rt_count > 0")
+      res = Rbitter::Record.where("rt_count > 0").limit(MAXIMUM_TWEETS)
       if not res.nil? and res.length > 0
         resQueue += relations_to_strings(res)
       end
@@ -36,21 +38,11 @@ module RPCHandles
         user.gsub!(/@/, "")
       end
 
-      res = Rbitter::Record.where("username = ?", user)
+      res = Rbitter::Record.where("username = ?", user).limit(MAXIMUM_TWEETS)
       if not res.nil? and res.length > 0
         resQueue += relations_to_strings(res)
       end
       resQueue
-    end
-
-    def within_24h
-      res = Rbitter::Record.where(date: (DateTime.now.prev_day..DateTime.now))
-      relations_to_strings res
-    end
-
-    def within_3days
-      res = Rbitter::Record.where(date: (DateTime.now.prev_day(2)..DateTime.now))
-      relations_to_strings res
     end
 
     def between from_DateTime, to_DateTime
@@ -62,6 +54,19 @@ module RPCHandles
 
       res = Rbitter::Record.where(date: (from_DateTime..to_DateTime))
       relations_to_strings res
+    end
+
+    def idrange reverse_offset, tail_id = -1
+      if tail_id < 0
+        tail_id = Rbitter::Record.last.id
+      end
+
+      resQueue = []
+      res = Rbitter::Record.where(id: ((tail_id - reverse_offset.abs)..tail_id))
+      if not res.nil? and res.length > 0
+        resQueue += relations_to_strings(res)
+      end
+      resQueue
     end
 
     private
