@@ -8,9 +8,7 @@ module Twitter
   module Streaming
     class Connection
       MODIFIED = true
-
       attr_reader :tcp_socket_class, :ssl_socket_class
-      attr_reader :MODIFIED
 
       def initialize(options = {})
         @tcp_socket_class = options.fetch(:tcp_socket_class) { TCPSocket }
