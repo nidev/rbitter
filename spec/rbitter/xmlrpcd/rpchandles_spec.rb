@@ -1,4 +1,5 @@
 # encoding: utf-8
+require "rbitter/xmlrpcd/rpchandles"
 
 describe Rbitter do
   it 'Rbitter is a module' do

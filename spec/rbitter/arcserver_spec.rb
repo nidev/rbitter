@@ -1,4 +1,5 @@
 # encoding: utf-8
+require "rbitter/arcserver"
 
 describe Rbitter::ArcServer do
   # TODO: Perform test...

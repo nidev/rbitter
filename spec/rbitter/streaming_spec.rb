@@ -1,4 +1,5 @@
 # encoding: utf-8
+require "rbitter/streaming"
 
 describe Rbitter::StreamClient do
   # TODO: Perform test...

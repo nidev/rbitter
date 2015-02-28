@@ -1,4 +1,5 @@
 # encoding: utf-8
+require "rbitter/console"
 
 describe Rbitter::Console do
   # TODO: Perform test...

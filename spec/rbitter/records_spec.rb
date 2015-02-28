@@ -1,4 +1,5 @@
 # encoding: utf-8
+require "rbitter/records"
 
 describe Rbitter::Record do
   # TODO: Perform test...

@@ -1,4 +1,5 @@
 # encoding: utf-8
+require "rbitter/dlthread"
 
 describe Rbitter::DLThread do
   # TODO: Perform test...
