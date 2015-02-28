@@ -31,12 +31,13 @@ module Twitter
             # https://dev.twitter.com/streaming/overview/connecting
             r, w, e = IO.select([ssl_client], [], [], 90)
             if r.nil?
+              # If timeout occurs
               ssl_client.close
               raise Twitter::Error::ServerError.new("Connection stalled")
-              break
+            else
+              # If socket is readable
+              retry
             end
-
-            retry
           end
         }
       end
