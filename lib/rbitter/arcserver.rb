@@ -3,6 +3,7 @@
 require "json"
 require "date"
 require "twitter"
+require "resolv"
 
 require "rbitter/records"
 require "rbitter/streaming"
@@ -79,7 +80,7 @@ module Rbitter
       rescue Twitter::Error::Unauthorized => e
         puts "Please configure your Twitter token on config.json."
         exit -1
-      rescue Twitter::Error::ServerError => e
+      rescue Twitter::Error::ServerError, Resolv::ResolvError => e
         puts "Service unavailable now. Retry in 5 second..."
         sleep 5
         retry
