@@ -14,3 +14,6 @@
 *.a
 mkmf.log
 *.gem
+*.json
+.rbitter
+.rbitter/*

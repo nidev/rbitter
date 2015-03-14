@@ -6,6 +6,7 @@ module RPCHandles
       "<rpchandle: #{name}-#{version} (written by #{author}, #{description})>"
     end
   }
+
   module BaseHandle
     # If a handler doesn't require an authorization, please inherit below class
     class NoAuth < Object

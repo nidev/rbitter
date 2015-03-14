@@ -6,7 +6,6 @@ require "webrick"
 
 module Rbitter
   RPC_PREFIX="rbitter"
-  RPC_HANDLE_PATH=File.expand_path("../handles", __FILE__)
 
   class RPCServer
     def initialize bind_host, bind_port
@@ -19,24 +18,27 @@ module Rbitter
     end
 
     def load_all_handles
-      Dir.entries(RPC_HANDLE_PATH).each { |fname|
-        fname = File.join(RPC_HANDLE_PATH, fname)
-        if File.exist?(fname) and File.file?(fname)
-          if fname.match(/rh_\w+\.rb$/)
-            begin
-              load fname
-            rescue Exception => e
-              # stub
-              puts "Exception while loading #{fname}"
-              puts e.inspect
+      Rbitter.env["xmlrpc"]["handles"].each { |path|
+        puts "[xmlrpc] Scanning handles from (#{path})"
+        Dir.entries(path).each { |fname|
+          fname = File.join(RPC_HANDLE_PATH, fname)
+          if File.exist?(fname) and File.file?(fname)
+            if fname.match(/rh_\w+\.rb$/)
+              begin
+                load fname
+              rescue Exception => e
+                # stub
+                puts "Exception while loading #{fname}"
+                puts e.inspect
+              end
+            else
+              puts "Ignored: #{fname}"
             end
-          else
-            puts "Ignored: #{fname}"
           end
-        end
+        }
       }
 
-      puts "modulespace RPCHandles, found #{RPCHandles.constants.length} constants."
+      puts "[xmlrpc] found #{RPCHandles.constants.length} constants."
       RPCHandles.constants.each { |handler|
         if RPCHandles.const_get(handler).is_a?(Class)
           @core.add_handler(RPC_PREFIX, RPCHandles.const_get(handler).new)

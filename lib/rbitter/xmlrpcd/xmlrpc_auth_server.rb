@@ -2,7 +2,7 @@
 #
 
 require "rbitter/xmlrpcd/rpchandles"
-require "rbitter/xmlrpcd/handles/base"
+require "rbitter/xmlrpcd/base"
 require "xmlrpc/server"
 require "webrick"
 

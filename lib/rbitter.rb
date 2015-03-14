@@ -15,7 +15,7 @@ module Rbitter
   def self.rbitter_help_msg  
     puts "Rbitter is a Twitter streaming archiver, with XMLRPC access."
     puts "-------"
-    puts "Usage: #{__FILE__} application-mode"
+    puts "Usage: rbitter (application-mode)"
     puts "application-mode's are:"
     puts "|- serve    : Launch Rbitter full system (Streaming + Database + XMLRPC)"
     puts "|- console  : Launch console application utilizing XMLRPC"
@@ -25,8 +25,6 @@ module Rbitter
   end
 
   def self.prebootstrap
-    Rbitter.config_initialize
-
     # Due to stalled socket problem, If unpatched twitter gem is installed.
     # Twitter::Streaming::Connection will be monkey-patched.
     patch_required = false
@@ -35,7 +33,9 @@ module Rbitter
       b5_version = Twitter::Version::MAJOR * 10000
       + Twitter::Version::MINOR * 100 + Twitter::Version::PATCH
       if b5_version <= 51400
-        warn " --> WARN: Monkey-patching Twitter::Streaming::Connection..."
+        warn "[rbitter] Monkey-patching Twitter::Streaming::Connection..."
+        warn "[rbitter] Gem installed on here seemed that it doesn't handle socket read timeout."
+        warn "[rbitter] Please upgrade twitter gem"
         patch_required = true
       end
     else
@@ -48,19 +48,15 @@ module Rbitter
     require "rbitter/libtwitter_connection_override" if patch_required
   end
 
-  def self.bootstrap
+  def self.bootstrap args=[]
     prebootstrap
 
-    if env.empty?
-      puts "No configuration available. Re-bootstrap with 'configure' command line argument."
-      exit -1
-    end
-
-    if ARGV.length == 0
+    if args.length == 0
       rbitter_header
-    elsif ARGV[0] == "serve"
-      main = Rbitter::ArcServer.new
+    elsif args[0] == "serve"
+      Rbitter.config_initialize
 
+      main = Rbitter::ArcServer.new
       if env['xmlrpc']['enable']
         $rpc_service_thread = Thread.new {
           rpc_server = Rbitter::RPCServer.new(env['xmlrpc']['bind_host'], env['xmlrpc']['bind_port'])
@@ -69,24 +65,23 @@ module Rbitter
         $rpc_service_thread.run
       end
       main.main_loop
-    elsif ARGV[0] == "configure"
+    elsif args[0] == "configure"
       require "rbitter/default/config_json"
+
       puts "Writing config.json now"
       open(File.join(Dir.pwd, "config.json"), "w") { |io|
         io.write(DEFAULT_CONFIG_JSON)
       }
       puts "Writing finished"
-      puts "You can move config.json one of these locations:"
-      puts "[1] $HOME/config.json"
-      puts "[2] $HOME/.rbitter/config.json"
-      puts "[3] ./config.json (current folder)"
-      puts "[4] ./.rbitter/config.json (current folder)"
-      puts "For 3 and 4, you have to be in same folder to launch Rbitter."
-      exit 0
-    elsif ARGV[0] == "console"
+      puts "You can put config.json one of these locations:"
+      puts "[1] config.json (current folder)"
+      puts "[2] .rbitter/config.json (current folder)"
+    elsif args[0] == "console"
+      Rbitter.config_initialize
+
       con = Rbitter::Console.new
       con.start
-    elsif ARGV[0] == "logs"
+    elsif args[0] == "logs"
       # show log in stdout
       puts "This feature is in heavy development. Sorry."
     else
@@ -95,4 +90,3 @@ module Rbitter
     end
   end
 end
-
