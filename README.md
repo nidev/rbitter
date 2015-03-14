@@ -1,4 +1,5 @@
 # Rbitter #
+[![Build Status](https://travis-ci.org/nidev/rbitter.svg?branch=master)](https://travis-ci.org/nidev/rbitter)
 
 Rbitter is a Twitter streaming client specialized in tweet archiving with remote access via XMLRPC, which is written in Ruby.
 
