@@ -21,7 +21,7 @@ module Rbitter
       Rbitter.env["xmlrpc"]["handles"].each { |path|
         puts "[xmlrpc] Scanning handles from (#{path})"
         Dir.entries(path).each { |fname|
-          fname = File.join(RPC_HANDLE_PATH, fname)
+          fname = File.join(path, fname)
           if File.exist?(fname) and File.file?(fname)
             if fname.match(/rh_\w+\.rb$/)
               begin
