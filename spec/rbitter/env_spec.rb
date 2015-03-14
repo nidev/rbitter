@@ -30,14 +30,12 @@ describe Rbitter do
 
     it 'loads configuration successfully with autodetection' do
       expect{Rbitter.config_initialize}.to_not raise_error
-    end
-
-    it 'makes Rbitter.env provide config.json contents' do
       expect(Rbitter.env.length > 0).to be(true)
     end
 
     it 'loads configuration successfully with given config.json path' do
       expect{Rbitter.config_initialize('config.json')}.to_not raise_error
+      expect(Rbitter.env.length > 0).to be(true)
     end
 
     it 'checks that Rbitter.env returns Hash' do
