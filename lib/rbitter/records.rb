@@ -30,10 +30,25 @@ module ARSupport
     if Rbitter.env['activerecord'] == 'sqlite3'
       puts "Warning: If you enable XMLRPC access, using sqlite is not recommended."
       puts "Warning: Random crash can happen because of concurrency."
-      ActiveRecord::Base.establish_connection(adapter: 'sqlite3', database: Rbitter.env['sqlite3']['dbfile'], timeout: 10000) # On some slow computer.
+      
+      if RUBY_PLATFORM == 'java'
+        require "jdbc/sqlite3"
+        Jdbc::SQLite3.load_driver
+        ActiveRecord::Base.establish_connection(
+          adapter: 'jdbcsqlite3',
+          database: Rbitter.env['sqlite3']['dbfile'],
+          timeout: 10000) # Long timeout for slow computer
+      else
+        ActiveRecord::Base.establish_connection(
+          adapter: 'sqlite3',
+          database: Rbitter.env['sqlite3']['dbfile'],
+          timeout: 10000) # Long timeout for slow computer
+      end
     elsif Rbitter.env['activerecord'] == 'mysql2'
+      Jdbc::MySQL.load_driver if RUBY_PLATFORM == 'java'
+      
       ActiveRecord::Base.establish_connection(
-        adapter: 'mysql2',
+        adapter: (RUBY_PLATFORM == 'java' ? 'jdbcmysql' : 'mysql2'),
         host: Rbitter.env['mysql2']['host'],
         port: Rbitter.env['mysql2']['port'],
         database: Rbitter.env['mysql2']['dbname'],

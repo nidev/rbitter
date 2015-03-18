@@ -20,6 +20,22 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
 
+  spec.add_dependency 'twitter', '~> 5.14'
+  spec.add_dependency 'json', '~> 1.7'
+  spec.add_dependency 'ripl', '~> 0'
+  spec.add_dependency 'activerecord', '~> 4.0'
+
+  if RUBY_PLATFORM == 'java'
+    spec.add_dependency 'activerecord-jdbc-adapter', '~> 0'
+    spec.add_dependency 'jdbc-sqlite3', '~> 3.8'
+    spec.add_dependency 'activerecord-jdbcsqlite3-adapter', '~> 0'
+    spec.add_dependency 'activerecord-jdbcmysql-adapter', '~> 0'
+  else
+    spec.add_dependency 'sqlite3', '~> 0'
+    spec.add_dependency 'mysql2', '~> 0'
+    spec.add_dependency 'activerecord-mysql2-adapter', '~> 0'
+  end
+
   spec.add_development_dependency "bundler", "~> 1.6"
   spec.add_development_dependency "rake", "~> 10.0"
 end

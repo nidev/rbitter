@@ -8,6 +8,7 @@
 /spec/reports/
 /tmp/
 /build/
+/vendor/
 *.bundle
 *.so
 *.o
@@ -15,5 +16,6 @@
 mkmf.log
 *.gem
 *.json
+*.sqlite
 .rbitter
 .rbitter/*
