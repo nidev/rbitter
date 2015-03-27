@@ -8,8 +8,8 @@ module Rbitter
     def initialize(dlfolder, cacert_path)
       @dest = dlfolder
       if not File.directory?(dlfolder)
-        puts "[ Given location is not available for downloading ]"
-        puts "[ Will save files on current folder.              ]"
+        warn "[dlthread] Given download location is not available for downloading."
+        warn "[dlthread] Current Dir is used instead."
         @dest = "./"
       end
 

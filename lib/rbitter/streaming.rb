@@ -68,7 +68,7 @@ module Rbitter
             "web_urls" => web_urls
           }
           
-          operation_block.call(res)
+          yield res
         end      
       end
     end

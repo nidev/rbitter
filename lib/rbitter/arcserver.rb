@@ -24,6 +24,8 @@ module Rbitter
         end
       end
 
+      ARSupport.update_database_scheme
+
       @t = StreamClient.new(Rbitter.env['twitter'].dup)
       @dt = DLThread.new(Rbitter.env['media_downloader']['download_dir'], Rbitter.env['media_downloader']['cacert_path'])
     end
@@ -52,7 +54,7 @@ module Rbitter
       begin
         write_init_marker
         @t.run { |a|
-          record = Record.find_or_create_by(tweetid: a['tweetid'])
+          record = Record.find_or_initialize_by(tweetid: a['tweetid'])
           record.update({:marker => 0,
             :marker_msg => "normal", 
             :userid => a['userid'],
@@ -62,8 +64,8 @@ module Rbitter
             :date => a['date'],
             :rt_count => a['rt_count'],
             :fav_count => a['fav_count']})
-          # Image download
-          #puts "#{a['screen_name']}[R#{a['rt_count']}/F#{a['fav_count']}] #{a['tweet']}"
+
+          record.save
           @dt.execute_urls(a['media_urls'])
         }
       rescue Interrupt => e

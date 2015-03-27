@@ -26,14 +26,15 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'activerecord', '~> 4.0'
 
   if RUBY_PLATFORM == 'java'
-    spec.add_dependency 'activerecord-jdbc-adapter', '~> 0'
+    spec.add_dependency 'activerecord-jdbc-adapter', '~> 1.3'
     spec.add_dependency 'jdbc-sqlite3', '~> 3.8'
-    spec.add_dependency 'activerecord-jdbcsqlite3-adapter', '~> 0'
-    spec.add_dependency 'activerecord-jdbcmysql-adapter', '~> 0'
+    sepc.add_dependency 'jdbc-mysql', '~> 5.1'
+    spec.add_dependency 'activerecord-jdbcsqlite3-adapter', '~> 1.3'
+    spec.add_dependency 'activerecord-jdbcmysql-adapter', '~> 1.3'
   else
-    spec.add_dependency 'sqlite3', '~> 0'
-    spec.add_dependency 'mysql2', '~> 0'
-    spec.add_dependency 'activerecord-mysql2-adapter', '~> 0'
+    spec.add_dependency 'sqlite3', '~> 1.3'
+    spec.add_dependency 'mysql2', '~> 0.3'
+    spec.add_dependency 'activerecord-mysql2-adapter', '~> 0.0.3'
   end
 
   spec.add_development_dependency "bundler", "~> 1.6"

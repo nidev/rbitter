@@ -9,6 +9,7 @@ module Rbitter
 end
 
 module ARSupport
+  SCHEME_VERSION = 20150327
   SCHEME = {
     :marker => :integer, # 0 normal, 2 cut, 1 resume
     :marker_msg => :string, # == 0 success, == 2 w/ message
@@ -28,8 +29,8 @@ module ARSupport
 
   def connect_database
     if Rbitter.env['activerecord'] == 'sqlite3'
-      puts "Warning: If you enable XMLRPC access, using sqlite is not recommended."
-      puts "Warning: Random crash can happen because of concurrency."
+      warn "Warning: If you enable XMLRPC access, using sqlite is not recommended."
+      warn "Warning: Random crash can happen because of concurrency."
       
       if RUBY_PLATFORM == 'java'
         require "jdbc/sqlite3"
@@ -61,13 +62,18 @@ module ARSupport
     end
   end
 
-  def migrate_version new_version
-    # STUB
+  def update_database_scheme
+    current_version = ActiveRecord::Migrator.current_version
+    if current_version < SCHEME_VERSION
+      warn "[records] Your ActiveRecord scheme is outdated."
+      warn "[records] Migrate... #{current_version} => #{SCHEME_VERSION}"
+      ActiveRecord::Migrator.migrate(File.expand_path("../records_migrate", __FILE__), SCHEME_VERSION)
+    end
   end
 
   def prepare option_string=""
-    # SCHEME is defined at records.rb
-    ActiveRecord::Schema.define(version: 20150202) {
+    ActiveRecord::Schema.define(version: SCHEME_VERSION) {
+      # MySQL specific option_string:
       # utf8mb4 -> supporting UTF-8 4-byte characters (i.e. Emoji)
       create_table(:records, { :options => option_string }) do |t|
         SCHEME.each_key { |column|
@@ -86,7 +92,7 @@ module ARSupport
         }
       end
 
-      #add_index :records, :tweetid, unique: true
+      add_index :records, :tweetid
     }
   end
 
