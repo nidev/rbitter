@@ -28,7 +28,7 @@ Gem::Specification.new do |spec|
   if RUBY_PLATFORM == 'java'
     spec.add_dependency 'activerecord-jdbc-adapter', '~> 1.3'
     spec.add_dependency 'jdbc-sqlite3', '~> 3.8'
-    sepc.add_dependency 'jdbc-mysql', '~> 5.1'
+    spec.add_dependency 'jdbc-mysql', '~> 5.1'
     spec.add_dependency 'activerecord-jdbcsqlite3-adapter', '~> 1.3'
     spec.add_dependency 'activerecord-jdbcmysql-adapter', '~> 1.3'
   else
