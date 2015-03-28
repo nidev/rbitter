@@ -1,19 +1,18 @@
 # Rbitter #
 [![Build Status](https://travis-ci.org/nidev/rbitter.svg?branch=master)](https://travis-ci.org/nidev/rbitter)
+[![Gem Version](https://badge.fury.io/rb/rbitter.svg)](http://badge.fury.io/rb/rbitter)
 
 Rbitter is a Twitter streaming client specialized in tweet archiving with remote access via XMLRPC, which is written in Ruby.
 
-You can save all tweets appeared on timeline and watch them later.
-
-**Rbitter can be built into a Ruby gem by typing 'gem build rbitter.gemspec'. It is not yet uploaded due to testing.**
+You can save all tweets appeared on your home timeline and watch them later.
 
 ## Requirements ##
 
-'bundle update' may install every gem Rbitter needs.
+Gem dependencies will be installed during installation of this gem.
 
-Ruby 2.0.0 or above
-Sqlite3
-Mysql(MariaDB)
+* Ruby 1.9.3 or above
+* Sqlite3
+* Mysql(MariaDB)
 
 ## Configuration ##
 You can simply manipulate default configuration file by:
@@ -24,16 +23,13 @@ $ rbitter configure
 
 Put your customized config.json to one of below locations.
 
-1. $HOME/config.json
-2. $HOME/.rbitter/config.json
-3. ./config.json (current folder)
-4. ./.rbitter/config.json (current folder)
-
-For location #3 and #4, they're referred when #1 and #2 are not available. In those cases, *rbitter* must be executed from the directory where config.json exists.
+1. ./config.json (current folder)
+2. ./.rbitter/config.json (current folder)
 
 ## Set up and run ##
-1. With config.json,
-2. Get Twitter token and copy them properly.
+With config.json,
+
+1. Get Twitter token and copy them properly.
 2. Choose preferred ActiveRecord backend.
 3. Modify default location where Twitter images are downloaded.
 4. Configure XMLRPC server
@@ -55,7 +51,11 @@ See XMLRPC.md
 ## Issue report or feature request ##
 It's recommended to open an issue even it seemed too small. A small flaw may result in instability or bad situation. So every feature requests/bug reports are welcomed.
 
-Please attach stack trace, Ruby version, and detail description.
+Please attach stack trace, Ruby version, Rbitter version, and detail description.
+
+If you installed from [RubyGems], please report with Git tag. Git tag is your gem version.
+
+[RubyGems]: https://rubygems.org
 
 ## Disclaimer ##
 Rbitter is intended for personal usage. Archived data should not be shared over Internet. Please keep them secure and safe, and protect privacy.
