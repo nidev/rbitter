@@ -31,10 +31,10 @@ module Rbitter
       Kernel.exit(0)
     end
     
-    def xmlrpc_dest **args
+    def xmlrpc_dest args={}
       if args.empty?
-        puts "Usage: xmlrpc_dest(:rpchost => '', :rpcpath => '', :rpcport => 1400,"
-        puts "                   :xmlrpc_auth_id => '', xmlrpc_auth_password => '')"
+        puts "Usage: xmlrpc_dest({ :rpchost => '', :rpcpath => '', :rpcport => 1400,"
+        puts "                   :xmlrpc_auth_id => '', xmlrpc_auth_password => '' })"
       end
 
       @rpchost = args.fetch(:rpchost) { "127.0.0.1" }
