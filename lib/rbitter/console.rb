@@ -15,16 +15,21 @@ module Rbitter
 
     def help
       puts "Predefined methods:"
+      puts "ar - shortcut to call Rbitter::Record"
+      puts "connect_ar - Prepare Rbitter::Record to be ready"
       puts "help - to show this message again"
-      puts "xmlrpc_dest - set destination for xmlrpc command"
       puts "xmlrpc - send xmlrpc command to destination"
-      puts "use_ar - Prepare Rbitter::Record to be ready"
-      puts "^D, 'exit' - to get out from here."
+      puts "xmlrpc_dest - set destination for xmlrpc command"
+      puts "^D, 'exit' to exit from here"
     end
 
-    def use_ar
+    def connect_ar
       ARSupport.connect_database
       puts "Rbitter::Record is ready."
+    end
+
+    def ar
+      Rbitter::Record
     end
 
     def exit
