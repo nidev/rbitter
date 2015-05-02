@@ -1,5 +1,4 @@
 # encoding: utf-8
-#
 
 require "rbitter/xmlrpcd/rpchandles"
 require "rbitter/xmlrpcd/base"

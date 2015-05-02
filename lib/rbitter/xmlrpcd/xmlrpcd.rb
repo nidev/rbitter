@@ -18,7 +18,7 @@ module Rbitter
     end
 
     def load_all_handles
-      Rbitter.env["xmlrpc"]["handles"].each { |path|
+      Rbitter["xmlrpc"]["handles"].each { |path|
         puts "[xmlrpc] Scanning handles from (#{path})"
         Dir.entries(path).each { |fname|
           fname = File.join(path, fname)
@@ -47,9 +47,10 @@ module Rbitter
     end
 
     def main_loop
-      puts "RPCServer starts"
       @server.mount("/", @core)
       @server.start
+
+      puts "[xmlrpc] XMLRPC started"
     end
   end
 end
