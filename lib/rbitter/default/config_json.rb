@@ -19,6 +19,7 @@ module Rbitter
     "password": ""
   },
   "media_downloader": {
+    "large_image": true,
     "cacert_path": "/cacerts/cacert.pem",
     "download_dir": "imgs/"
   },
