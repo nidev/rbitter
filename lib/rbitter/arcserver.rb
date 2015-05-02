@@ -33,7 +33,8 @@ module Rbitter
       @t = StreamClient.new(Rbitter.env['twitter'].dup)
       @dt = DLThread.new(
         Rbitter.env['media_downloader']['download_dir'],
-        Rbitter.env['media_downloader']['cacert_path'])
+        Rbitter.env['media_downloader']['cacert_path'],
+        Rbitter.env['media_downloader']['large_image'])
     end
 
     def mark(code, message)
