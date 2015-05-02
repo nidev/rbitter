@@ -12,6 +12,10 @@ require "rbitter/xmlrpc"
 
 module Rbitter
   class ArcServer
+    LOG_NORMAL = 0
+    LOG_INIT = 1
+    LOG_HALT = 2
+
     def initialize
       ARSupport.connect_database
 
@@ -27,11 +31,13 @@ module Rbitter
       ARSupport.update_database_scheme
 
       @t = StreamClient.new(Rbitter.env['twitter'].dup)
-      @dt = DLThread.new(Rbitter.env['media_downloader']['download_dir'], Rbitter.env['media_downloader']['cacert_path'])
+      @dt = DLThread.new(
+        Rbitter.env['media_downloader']['download_dir'],
+        Rbitter.env['media_downloader']['cacert_path'])
     end
 
-    def write_marker(message)
-      Record.create({:marker => 1,
+    def mark(code, message)
+      Record.create({:marker => code,
         :marker_msg => message, 
         :userid => nil,
         :username => nil,
@@ -43,11 +49,11 @@ module Rbitter
     end
 
     def write_init_marker
-      write_marker "Archiving service started"
+      mark(LOG_INIT, "Archiving service started")
     end
 
     def write_halt_marker
-      write_marker "Archiving service halted"
+      mark(LOG_HALT, "Archiving service halted")
     end
 
     def main_loop
