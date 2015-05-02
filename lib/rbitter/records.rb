@@ -28,7 +28,7 @@ module ARSupport
   end
 
   def connect_database
-    if Rbitter.env['activerecord'] == 'sqlite3'
+    if Rbitter['activerecord'] == 'sqlite3'
       warn "Warning: If you enable XMLRPC access, using sqlite is not recommended."
       warn "Warning: Random crash can happen because of concurrency."
       
@@ -37,24 +37,24 @@ module ARSupport
         Jdbc::SQLite3.load_driver
         ActiveRecord::Base.establish_connection(
           adapter: 'jdbcsqlite3',
-          database: Rbitter.env['sqlite3']['dbfile'],
+          database: Rbitter['sqlite3']['dbfile'],
           timeout: 10000) # Long timeout for slow computer
       else
         ActiveRecord::Base.establish_connection(
           adapter: 'sqlite3',
-          database: Rbitter.env['sqlite3']['dbfile'],
+          database: Rbitter['sqlite3']['dbfile'],
           timeout: 10000) # Long timeout for slow computer
       end
-    elsif Rbitter.env['activerecord'] == 'mysql2'
+    elsif Rbitter['activerecord'] == 'mysql2'
       Jdbc::MySQL.load_driver if RUBY_PLATFORM == 'java'
       
       ActiveRecord::Base.establish_connection(
         adapter: (RUBY_PLATFORM == 'java' ? 'jdbcmysql' : 'mysql2'),
-        host: Rbitter.env['mysql2']['host'],
-        port: Rbitter.env['mysql2']['port'],
-        database: Rbitter.env['mysql2']['dbname'],
-        username: Rbitter.env['mysql2']['username'],
-        password: Rbitter.env['mysql2']['password'],
+        host: Rbitter['mysql2']['host'],
+        port: Rbitter['mysql2']['port'],
+        database: Rbitter['mysql2']['dbname'],
+        username: Rbitter['mysql2']['username'],
+        password: Rbitter['mysql2']['password'],
         encoding: "utf8mb4",
         collation: "utf8mb4_unicode_ci")
     else

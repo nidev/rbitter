@@ -7,11 +7,11 @@ module Rbitter
 
   class ConfigFileError < StandardError; end
 
-  module_function
-  def [](k)
+  def self.[](k)
     @env[k]
   end
 
+  module_function
   def env
     @env
   end
@@ -20,23 +20,24 @@ module Rbitter
     @env.clear
   end
 
-  def config_load path
-    open(path, 'r') { |file|
-      @env = JSON.parse(file.read)
-    }
+  def env_validate?
+    # TODO: Add validator
     true
   end
 
   def config_initialize json_path=nil
-    @env = JSON.parse("{}")
+    env_reset
 
     unless json_path.nil?
       begin
-        config_load(json_path)
-        # TODO: Configuration validation
-        return @env
+        open(json_path, 'r') { |file|
+          @env = JSON.parse(file.read)
+        }
+
+        return @env if env_validate?
+        fail StandardError, "Invalid configuration"
       rescue => e
-        fail ConfigFileError, "Provided configuration can not be loaded. (#{json_path})"
+        fail ConfigFileError, "Load Failure (#{json_path}): #{e.to_s}"
       end
     end
 
@@ -48,7 +49,10 @@ module Rbitter
 
     for location in locations
       next unless File.file?(location)
-      break if config_load(location)
+      open(location, 'r') { |file|
+        @env = JSON.parse(file.read)
+      }
+      break if env_validate?
     end
 
     if @env.empty?

@@ -51,7 +51,7 @@ describe Rbitter do
     end
   end
 
-  context 'when config.json is corrupted' do
+  context 'when env_validator validates loaded configuration' do
     # TODO: Perform test with spec/config/default.json
     # TODO: Adding configuration validator on env.rb
   end
