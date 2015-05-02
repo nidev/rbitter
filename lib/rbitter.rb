@@ -33,9 +33,8 @@ module Rbitter
       b5_version = Twitter::Version::MAJOR * 10000
       + Twitter::Version::MINOR * 100 + Twitter::Version::PATCH
       if b5_version <= 51400
-        warn "[rbitter] Monkey-patching Twitter::Streaming::Connection..."
-        warn "[rbitter] Gem installed on here seemed that it doesn't handle socket read timeout."
-        warn "[rbitter] Please upgrade twitter gem"
+        warn "[rbitter] Monkey-patching Twitter::Streaming::Connection"
+        warn "[rbitter] Please upgrade twitter gem to apply streaming read timeout"
         patch_required = true
       end
     else
