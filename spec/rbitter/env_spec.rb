@@ -39,10 +39,12 @@ describe Rbitter do
     end
 
     it 'checks that Rbitter.env returns Hash' do
+      expect{Rbitter.config_initialize}.to_not raise_error
       expect(Rbitter.env).to be_a(Hash)
     end
 
     it 'checks that Rbitter[] works' do
+      expect{Rbitter.config_initialize}.to_not raise_error
       expect(Rbitter["twitter"]).to be_a(Hash)
     end
 
