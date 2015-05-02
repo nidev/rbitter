@@ -3,21 +3,21 @@
 require "json"
 
 module Rbitter
-  @env = Hash.new
+  @@env = Hash.new
 
   class ConfigFileError < StandardError; end
 
   def self.[](k)
-    @env[k]
+    @@env[k]
   end
 
   module_function
   def env
-    @env
+    @@env
   end
 
   def env_reset
-    @env.clear
+    @@env.clear
   end
 
   def env_validate?
@@ -31,10 +31,10 @@ module Rbitter
     unless json_path.nil?
       begin
         open(json_path, 'r') { |file|
-          @env = JSON.parse(file.read)
+          @@env = JSON.parse(file.read)
         }
 
-        return @env if env_validate?
+        return @@env if env_validate?
         fail StandardError, "Invalid configuration"
       rescue => e
         fail ConfigFileError, "Load Failure (#{json_path}): #{e.to_s}"
@@ -50,12 +50,12 @@ module Rbitter
     for location in locations
       next unless File.file?(location)
       open(location, 'r') { |file|
-        @env = JSON.parse(file.read)
+        @@env = JSON.parse(file.read)
       }
       break if env_validate?
     end
 
-    if @env.empty?
+    if @@env.empty?
       fail ConfigFileError, "Can not load any configuration in [#{locations.join(', ')}]"
     end
   end
