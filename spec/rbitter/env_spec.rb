@@ -11,13 +11,13 @@ describe Rbitter do
 
   context 'when config.json is not installed,' do
     it 'fails on loading' do
-      expect{Rbitter.config_initialize}.to raise_error(Rbitter::ConfigurationFileError)
+      expect{Rbitter.config_initialize}.to raise_error(Rbitter::ConfigFileError)
     end
   end
 
   context 'when path to config.json is invalid,' do
     it 'fals on loading' do
-      expect{Rbitter.config_initialize("/silly/dummy/.")}.to raise_error(Rbitter::ConfigurationFileError)
+      expect{Rbitter.config_initialize("/silly/dummy/.")}.to raise_error(Rbitter::ConfigFileError)
     end
   end
 
@@ -40,6 +40,10 @@ describe Rbitter do
 
     it 'checks that Rbitter.env returns Hash' do
       expect(Rbitter.env).to be_a(Hash)
+    end
+
+    it 'checks that Rbitter[] works' do
+      expect(Rbitter["twitter"]).to be_a(Hash)
     end
 
     after(:all) do

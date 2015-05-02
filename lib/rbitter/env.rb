@@ -3,57 +3,56 @@
 require "json"
 
 module Rbitter
-  @internal_configuration = {}
+  @env = Hash.new
 
-  class ConfigurationFileError < StandardError; end
+  class ConfigFileError < StandardError; end
 
   module_function
+  def [](k)
+    @env[k]
+  end
+
   def env
-    @internal_configuration
+    @env
   end
 
   def env_reset
-    @internal_configuration.clear
+    @env.clear
   end
 
   def config_load path
-    open(path, 'r') { |io|
-      @internal_configuration = JSON.parse(io.read)
+    open(path, 'r') { |file|
+      @env = JSON.parse(file.read)
     }
     true
   end
 
   def config_initialize json_path=nil
-    @internal_configuration = JSON.parse("{}")
+    @env = JSON.parse("{}")
 
     unless json_path.nil?
       begin
         config_load(json_path)
         # TODO: Configuration validation
-        return @internal_configuration
+        return @env
       rescue => e
-        fail ConfigurationFileError, "Provided configuration can not be loaded. (#{json_path})"
+        fail ConfigFileError, "Provided configuration can not be loaded. (#{json_path})"
       end
     end
 
     # Configuration default location
-    # Priorities
     # 1. (current_dir)/config.json
     # 2. (current_dir)/.rbitter/config.json
-    locations = Array.new
-    base_locations = ["config.json", ".rbitter/config.json"]
-
-    base_locations.each { |bloc|
-        locations.push File.join(Dir.pwd, bloc)
-    }
+    locations = ["config.json", ".rbitter/config.json"]
+    locations.collect! { |base| File.join(Dir.pwd, base) }
 
     for location in locations
       next unless File.file?(location)
       break if config_load(location)
     end
 
-    if @internal_configuration.empty?
-      fail ConfigurationFileError, "Can not load any configuration in [#{locations.join(', ')}]"
+    if @env.empty?
+      fail ConfigFileError, "Can not load any configuration in [#{locations.join(', ')}]"
     end
   end
 end
