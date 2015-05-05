@@ -19,6 +19,8 @@ module Rbitter
       else
         @large_image = large_flag
       end
+
+      @pool = Array.new
     end
 
     def <<(url_array)
@@ -46,6 +48,18 @@ module Rbitter
       }
 
       download_task.run
+      @pool.push download_task
+    end
+
+    def job_cleanup
+      until @pool.empty?
+        puts "[dlthread] Thread forceful cleaning up [remains: #{@pool.length}]"
+        dlthrd = @pool.shift
+        if dlthrd.alive?
+          @rpc_service.terminate
+          @rpc_service.join
+        end
+      end
     end
   end
 end
