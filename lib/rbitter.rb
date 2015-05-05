@@ -8,8 +8,10 @@ require "rbitter/console"
 require "rbitter/xmlrpc"
 
 module Rbitter
+  BOOTSTRAP_ARGS = ['configure', 'console', 'help', 'logs', 'serve']
+
   def self.rbitter_header
-    puts "Rbitter #{VERSION} on Ruby-#{RUBY_VERSION} (#{RUBY_PLATFORM})"
+    puts "Rbitter #{VERSION} on #{RUBY_VERSION} (#{RUBY_PLATFORM})"
   end
 
   def self.rbitter_help_msg  
@@ -47,34 +49,28 @@ module Rbitter
     require "rbitter/libtwitter_connection_override" if patch_required
   end
 
+  def self.bootstrap_configs
+    require "rbitter/default/config_json"
+
+    open(File.join(Dir.pwd, "config.json"), "w") { |io|
+      io.write(DEFAULT_CONFIG_JSON)
+    }
+  end
+
   def self.bootstrap args=[]
-    prebootstrap
+    return nil if args.length < 1
+    
+    if args[0] == "serve"
+      prebootstrap
 
-    if args.length == 0
-      rbitter_header
-    elsif args[0] == "serve"
       Rbitter.config_initialize
-
-      main = Rbitter::ArcServer.new
-      if env['xmlrpc']['enable']
-        $rpc_service_thread = Thread.new {
-          rpc_server = Rbitter::RPCServer.new(env['xmlrpc']['bind_host'], env['xmlrpc']['bind_port'])
-          rpc_server.main_loop
-        }
-        $rpc_service_thread.run
-      end
-      main.main_loop
+      
+      archive_server = Rbitter::ArcServer.new
+      archive_server.main_loop
+    elsif args[0] == "help"
+      rbitter_help_msg
     elsif args[0] == "configure"
-      require "rbitter/default/config_json"
-
-      puts "Writing config.json now"
-      open(File.join(Dir.pwd, "config.json"), "w") { |io|
-        io.write(DEFAULT_CONFIG_JSON)
-      }
-      puts "Writing finished"
-      puts "You can put config.json one of these locations:"
-      puts "[1] config.json (current folder)"
-      puts "[2] .rbitter/config.json (current folder)"
+      bootstrap_configs
     elsif args[0] == "console"
       Rbitter.config_initialize
 
@@ -82,10 +78,9 @@ module Rbitter
       con.start
     elsif args[0] == "logs"
       # show log in stdout
-      puts "This feature is in heavy development. Sorry."
+      puts "Log buffer feature is in heavy development. Sorry."
     else
-      rbitter_header
-      rbitter_help_msg
+      fail StandardError, "Invalid bootstrap parameter: #{args[0]}"
     end
   end
 end

@@ -2,5 +2,19 @@
 
 require "rbitter"
 
-Rbitter.bootstrap(ARGV)
+Rbitter.rbitter_header
+
+if ARGV.length < 1 || not Rbitter::AVAILABLE_ARG.include?(ARGV[0])  
+  Rbitter.rbitter_help_msg
+  exit -1
+else
+  Rbitter.bootstrap(ARGV)
+
+  if ARGV[0] == "configure"
+    puts "Writing config.json done"
+    puts "You can put config.json one of these locations:"
+    puts "[1] config.json (current folder)"
+    puts "[2] .rbitter/config.json (current folder)"
+  end
+end
 

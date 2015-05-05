@@ -16,7 +16,9 @@ module Rbitter
     LOG_INIT = 1
     LOG_HALT = 2
 
-    def initialize
+    def initialize(xmlrpcd_class = Rbitter::RPCServer)
+      @xmlrpcd_class = xmlrpcd_class
+
       ARSupport.connect_database
 
       if not ARSupport.prepared?
@@ -35,6 +37,29 @@ module Rbitter
         Rbitter['media_downloader']['download_dir'],
         Rbitter['media_downloader']['cacert_path'],
         Rbitter['media_downloader']['large_image'])
+    end
+
+    def xmlrpcd_start
+      if env['xmlrpc']['enable']
+        @rpc_service = Thread.new {
+          rpc_server = @xmlrpcd_class.new(Rbitter['xmlrpc']['bind_host'], Rbitter['xmlrpc']['bind_port'])
+          rpc_server.main_loop
+        }
+        @rpc_service.run
+      else
+        @rpc_service = nil
+      end
+    end
+
+    def xmlrpcd_stop
+      unless @rpc_service.nil?
+        if @rpc_service.alive?
+          puts "Finishing RPCServer (impl: #{}"
+          @rpc_service.terminate
+          @rpc_service.join
+          @rpc_service = nil
+        end
+      end
     end
 
     def mark(code, message)
@@ -59,9 +84,13 @@ module Rbitter
     end
 
     def main_loop
+      xmlrpcd_start if Rbitter['xmlrpc']['enable']
+
       begin
         write_init_marker
         @t.run { |a|
+          @dt << a['media_urls']
+
           record = Record.find_or_initialize_by(tweetid: a['tweetid'])
           record.update({:marker => 0,
             :marker_msg => "normal", 
@@ -75,18 +104,14 @@ module Rbitter
             :fav_count => a['fav_count']})
 
           record.save
-          @dt.execute_urls(a['media_urls'])
         }
       rescue Interrupt => e
         puts ""
         puts "Interrupted..."
-        if Rbitter['xmlrpc']['enable']
-          puts "Finishing RPCServer"
-          if $rpc_service_thread.alive?
-            $rpc_service_thread.terminate
-            $rpc_service_thread.join
-          end
-        end
+
+        xmlrpcd_stop if Rbitter['xmlrpc']['enable']
+        @dt.job_cleanup
+
         exit 0
       rescue Twitter::Error::Unauthorized => e
         puts "Please configure your Twitter token on config.json."
