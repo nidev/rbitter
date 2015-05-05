@@ -110,14 +110,12 @@ module Rbitter
         puts "Interrupted..."
       rescue Twitter::Error::Unauthorized => e
         puts "Please configure your Twitter token on config.json."
-        exit -1
       rescue Twitter::Error::ServerError, Resolv::ResolvError => e
         puts "Service unavailable now. Retry in 5 second..."
         sleep 5
         retry
       rescue Twitter::Error => e
         puts "Twitter Error: #{e.inspect}"
-        exit -1
       ensure
         xmlrpcd_stop if Rbitter['xmlrpc']['enable']
         @dt.job_cleanup
