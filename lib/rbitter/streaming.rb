@@ -59,6 +59,7 @@ module Rbitter
           res = {
             "tweetid" => tweet.id,
             "userid" => tweet.user.id,
+            "replyto" => tweet.in_reply_to_status_id? ? tweet.in_reply_to_status_id : nil,
             "tweet" => text,
             "rt_count" => tweet.retweet_count,
             "fav_count" => tweet.favorite_count,

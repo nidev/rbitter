@@ -9,13 +9,14 @@ module Rbitter
 end
 
 module ARSupport
-  SCHEME_VERSION = 20150327
+  SCHEME_VERSION = 20150504
   SCHEME = {
-    :marker => :integer, # 0 normal, 2 cut, 1 resume
-    :marker_msg => :string, # == 0 success, == 2 w/ message
+    :marker => :integer, # 0 normal, 1 begin 2 halt
+    :marker_msg => :string,
     :userid => :integer,
     :username => :string,
     :tweetid => :integer,
+    :replyto => :integer,
     :tweet => :text, # with url unpacked
     :date => :datetime,
     :rt_count => :integer,
