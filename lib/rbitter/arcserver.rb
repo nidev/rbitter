@@ -32,7 +32,6 @@ module Rbitter
 
       ARSupport.update_database_scheme
 
-      @t = StreamClient.new(Rbitter['twitter'].dup)
       @dt = DLThread.new(
         Rbitter['media_downloader']['download_dir'],
         Rbitter['media_downloader']['cacert_path'],
@@ -40,7 +39,7 @@ module Rbitter
     end
 
     def xmlrpcd_start
-      if env['xmlrpc']['enable']
+      if Rbitter['xmlrpc']['enable']
         @rpc_service = Thread.new {
           rpc_server = @xmlrpcd_class.new(Rbitter['xmlrpc']['bind_host'], Rbitter['xmlrpc']['bind_port'])
           rpc_server.main_loop
@@ -54,7 +53,7 @@ module Rbitter
     def xmlrpcd_stop
       unless @rpc_service.nil?
         if @rpc_service.alive?
-          puts "Finishing RPCServer (impl: #{}"
+          puts "Finishing RPCServer (impl: #{})"
           @rpc_service.terminate
           @rpc_service.join
           @rpc_service = nil
@@ -83,12 +82,13 @@ module Rbitter
       mark(LOG_HALT, "Archiving service halted")
     end
 
-    def main_loop
+    def main_loop(streaming_adapter = Rbitter::StreamClient)
       xmlrpcd_start if Rbitter['xmlrpc']['enable']
 
       begin
         write_init_marker
-        @t.run { |a|
+
+        streaming_adapter.new(Rbitter['twitter'].dup).run { |a|
           @dt << a['media_urls']
 
           record = Record.find_or_initialize_by(tweetid: a['tweetid'])
@@ -108,11 +108,6 @@ module Rbitter
       rescue Interrupt => e
         puts ""
         puts "Interrupted..."
-
-        xmlrpcd_stop if Rbitter['xmlrpc']['enable']
-        @dt.job_cleanup
-
-        exit 0
       rescue Twitter::Error::Unauthorized => e
         puts "Please configure your Twitter token on config.json."
         exit -1
@@ -124,6 +119,9 @@ module Rbitter
         puts "Twitter Error: #{e.inspect}"
         exit -1
       ensure
+        xmlrpcd_stop if Rbitter['xmlrpc']['enable']
+        @dt.job_cleanup
+
         write_halt_marker
       end
     end

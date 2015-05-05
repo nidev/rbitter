@@ -4,7 +4,7 @@ require "rbitter"
 
 Rbitter.rbitter_header
 
-if ARGV.length < 1 || not Rbitter::AVAILABLE_ARG.include?(ARGV[0])  
+if ARGV.length < 1 || (not Rbitter::BOOTSTRAP_ARGS.include?(ARGV[0]))
   Rbitter.rbitter_help_msg
   exit -1
 else
