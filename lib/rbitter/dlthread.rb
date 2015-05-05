@@ -47,7 +47,6 @@ module Rbitter
         }
       }
 
-      download_task.run
       @pool.push download_task
     end
 

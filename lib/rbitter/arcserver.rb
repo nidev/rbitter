@@ -44,7 +44,6 @@ module Rbitter
           rpc_server = @xmlrpcd_class.new(Rbitter['xmlrpc']['bind_host'], Rbitter['xmlrpc']['bind_port'])
           rpc_server.main_loop
         }
-        @rpc_service.run
       else
         @rpc_service = nil
       end
