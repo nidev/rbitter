@@ -3,6 +3,34 @@
 require 'twitter'
 
 module Rbitter
+  class DummyStreamClient
+    def initialize(tokens); end
+
+    def run(&operation_block)
+      internal(&operation_block)
+    end
+
+    private
+    def internal(&operation_block)
+      tweets = [{
+        "tweetid" => 1,
+        "userid" => 1,
+        "replyto" => nil,
+        "tweet" => "test",
+        "rt_count" => 0,
+        "fav_count" => 0,
+        "screen_name" => "twitter",
+        "date" => "2015-01-01 12:11:10",
+        "media_urls" => ["https://pbs.twimg.com/media/CEPWFtgUgAEmbcV.png"],
+        "web_urls" => ["https://www.google.com/"]
+      }]
+
+      tweets.each { |tweet|
+        yield tweet
+      }
+    end
+  end
+
   class StreamClient
     def initialize(tokens)
       @t = Twitter::Streaming::Client.new do |object|
