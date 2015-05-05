@@ -54,10 +54,12 @@ module Rbitter
     def job_cleanup
       until @pool.empty?
         puts "[dlthread] Thread forceful cleaning up [remains: #{@pool.length}]"
+        
         dlthrd = @pool.shift
+
         if dlthrd.alive?
-          @rpc_service.terminate
-          @rpc_service.join
+          dlthrd.terminate
+          dlthrd.join
         end
       end
     end
