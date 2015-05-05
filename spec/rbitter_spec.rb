@@ -3,10 +3,6 @@
 require "rbitter"
 
 describe Rbitter do
-  it 'Rbitter is a module' do
-    expect(Rbitter.class === Module).to be(true)
-  end
-
   context 'when a user requests help message,' do
     it 'shows help message' do
       Rbitter.bootstrap(['help'])
