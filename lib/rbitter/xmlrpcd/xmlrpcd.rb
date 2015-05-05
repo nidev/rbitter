@@ -11,7 +11,6 @@ module Rbitter
     def initialize bind_host, bind_port
       @server = WEBrick::HTTPServer.new(:Port => bind_port.to_i, :BindAddress => bind_host.to_s, :MaxClients => 4, :Logger => WEBrick::Log.new($stdout))
       @core = XMLRPC::HTTPAuthXMLRPCServer.new
-      load_all_handles
       @core.set_default_handler { |name, *args|
         "NO_COMMAND: #{name} with args #{args.inspect}"
       }
@@ -47,18 +46,24 @@ module Rbitter
     end
 
     def main_loop
+      load_all_handles
+
       @server.mount("/", @core)
       @server.start
 
       puts "[xmlrpc] XMLRPC started"
     end
   end
+
+  class DummyRPCServer
+    def initialize bind_host, bind_port; end
+
+    def load_all_handles; end
+
+    def main_loop
+      puts "[xmlrpc] DummyRPCServer started"
+    end
+  end
+
+  class NullRPCServer; end
 end
-
-
-if __FILE__ == $0
-  puts "Local testing server starts..."
-  rpcd = Rbitter::RPCServer.new('127.0.0.1', 1300)
-  rpcd.main_loop
-end
-
