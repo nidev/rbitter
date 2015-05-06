@@ -107,4 +107,15 @@ module ARSupport
       raise ArgumentError.new("Can\'t automatically extract DateTime info")
     end
   end
+
+  def export_to_csv(csvfile)
+    open(csvfile, 'w') { |f|
+      f.write("marker,marker_msg,userid,username,tweetid,replyto,tweet,date,rt_count,fav_count")
+      f.write("\n")
+      Rbitter::Record.find_each { |t|
+        f.write("#{t.marker},#{t.marker_msg},#{t.userid},#{t.username},#{t.tweetid},")
+        f.write("#{t.replyto},#{t.tweet},#{t.date},#{t.rt_count},#{t.fav_count}\n")
+      }
+    }
+  end
 end
