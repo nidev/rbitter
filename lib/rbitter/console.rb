@@ -17,6 +17,7 @@ module Rbitter
       puts "Predefined methods:"
       puts "ar - shortcut to call Rbitter::Record"
       puts "connect_ar - Prepare Rbitter::Record to be ready"
+      puts "csv_backup - export Rbitter::Record into comma-separated values"
       puts "help - to show this message again"
       puts "xmlrpc - send xmlrpc command to destination"
       puts "xmlrpc_dest - set destination for xmlrpc command"
@@ -26,6 +27,15 @@ module Rbitter
     def connect_ar
       ARSupport.connect_database
       puts "Rbitter::Record is ready."
+    end
+
+    def csv_backup *args
+      if args.length < 0
+        puts "Usage: csv_backup('filename.csv')"
+        puts "Estimated running time depends on system environment"
+      else
+        ARSupport.export_to_csv(args[0])
+      end
     end
 
     def ar
