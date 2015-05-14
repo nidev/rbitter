@@ -23,8 +23,8 @@ describe Rbitter::ArcServer do
     end
 
     after(:all) do
-      File.delete('config.json')
-      File.delete('rbitter.sqlite')
+      File.delete('config.json') if File.exist?('config.json')
+      File.delete('rbitter.sqlite') if File.exist?('rbitter.sqlite')
     end
   end
 end
