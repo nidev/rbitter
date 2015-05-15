@@ -2,11 +2,11 @@
 
 
 class AddIndex < ActiveRecord::Migration
-  def self.up
+  def up
     add_index :records, :tweetid
   end
 
-  def self.change
-    self.up
+  def change
+    up
   end
 end
