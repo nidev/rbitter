@@ -14,6 +14,11 @@ module Rbitter
       end
 
       @cacert = cacert_path
+
+      unless File.exist?(@cacert)
+        fail StandardError, "Can not load ca-certificate file from #{cacert_path}"
+      end
+
       if large_flag.nil?
         @large_image = false
       else
@@ -33,17 +38,21 @@ module Rbitter
             http.ca_path = @cacert
           end
 
-          http.request_get(uri.path) { |res|
-            case res
-            when Net::HTTPOK
-              fname = File.basename(url)
+          begin
+            http.request_get(uri.path) { |res|
+              case res
+              when Net::HTTPOK
+                fname = File.basename(url)
 
-              puts "[fetch] remote: #{uri.path} => local: #{fname}"
-              open(File.join(@dest, fname), "wb") { |file|
-                res.read_body { |chunk| file.write(chunk) }
-              }
-            end
-          }
+                puts "[fetch] remote: #{uri.path} => local: #{fname}"
+                open(File.join(@dest, fname), "wb") { |file|
+                  res.read_body { |chunk| file.write(chunk) }
+                }
+              end
+            }
+          rescue OpenSSL::SSL::SSLError => e
+            warn "[dlthread] Invalid SSL cert. Can not make secure connection."
+          end
         }
       }
 
@@ -52,11 +61,10 @@ module Rbitter
 
     def job_cleanup
       until @pool.empty?
-        puts "[dlthread] Thread forceful cleaning up [remains: #{@pool.length}]"
-        
         dlthrd = @pool.shift
 
         if dlthrd.alive?
+          puts "[dlthread] Thread forceful cleaning up [remains: #{@pool.length}]"
           dlthrd.terminate
           dlthrd.join
         end
