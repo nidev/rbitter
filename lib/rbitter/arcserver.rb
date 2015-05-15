@@ -107,13 +107,18 @@ module Rbitter
         puts ""
         puts "Interrupted..."
       rescue Twitter::Error::Unauthorized => e
-        puts "Please configure your Twitter token on config.json."
+        warn "Twitter access unauthorized:"
+        warn "  Possible solutions"
+        warn "  1. Configure Twitter token on config.json"
+        warn "  2. Check system time (Time is important on authentication)"
+        warn "  3. Check Twitter account status"
       rescue Twitter::Error::ServerError, Resolv::ResolvError => e
         puts "Service unavailable now. Retry in 5 second..."
         sleep 5
         retry
       rescue Twitter::Error => e
-        puts "Twitter Error: #{e.inspect}"
+        warn "Twitter Error: #{e.inspect}"
+        warn "Main loop of ArcServer halted."
       ensure
         xmlrpcd_stop if Rbitter['xmlrpc']['enable']
         @dt.job_cleanup
