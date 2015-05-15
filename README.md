@@ -8,6 +8,9 @@ Rbitter is a Twitter streaming client specialized in tweet archiving with remote
 You can save all tweets appeared on your home timeline and watch them later.
 
 ## Requirements ##
+Rbitter is tested under [MRI](https://www.ruby-lang.org), [JRuby](http://jruby.org) and [Rubinius](http://rubini.us). So you can choose one of these implementations.
+
+It can run under both Windows and Linux.
 
 Gem dependencies will be installed during installation of this gem.
 
@@ -57,6 +60,9 @@ Please attach stack trace, Ruby version, Rbitter version, and detail description
 If you installed from [RubyGems], please report with Git tag. Git tag is your gem version.
 
 [RubyGems]: https://rubygems.org
+
+## Application Versioning ##
+Rbitter follows [Sementic Versioning 2.0](http://semver.org/spec/v2.0.0.html).
 
 ## Disclaimer ##
 Rbitter is intended for personal usage. Archived data should not be shared over Internet. Please keep them secure and safe, and protect privacy.
