@@ -52,7 +52,7 @@ module Rbitter
     def xmlrpcd_stop
       unless @rpc_service.nil?
         if @rpc_service.alive?
-          puts "Finishing RPCServer (impl: #{})"
+          puts "Finishing RPCServer (impl: #{@xmlrpcd_class})"
           @rpc_service.terminate
           @rpc_service.join
           @rpc_service = nil
