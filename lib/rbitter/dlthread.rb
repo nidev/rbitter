@@ -32,14 +32,11 @@ module Rbitter
       download_task = Thread.new {
         url_array.each { |url|
           uri = URI.parse(@large_image ? url + ":large" : url) 
-          http = Net::HTTP.new(uri.host, uri.port)
-          if uri.scheme.downcase == 'https'
-            http.use_ssl = true
-            http.ca_path = @cacert
-          end
+          ssl = uri.scheme.downcase == 'https'
 
-          begin
-            http.request_get(uri.path) { |res|
+          Net::HTTP.start(uri.host, uri.port, :use_ssl => ssl) { |h|
+            req = Net::HTTP::Get.new uri.request_uri
+            h.request(req) { |res|
               case res
               when Net::HTTPOK
                 fname = File.basename(url)
@@ -50,9 +47,7 @@ module Rbitter
                 }
               end
             }
-          rescue OpenSSL::SSL::SSLError => e
-            warn "[dlthread] Invalid SSL cert. Can not make secure connection."
-          end
+          }
         }
       }
 
