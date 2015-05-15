@@ -2,7 +2,11 @@
 
 
 class AddReplytoColumn < ActiveRecord::Migration
-  def self.change
+  def self.up
     add_column :records, :replyto, :limit => 8
+  end
+
+  def self.change
+    self.up
   end
 end
