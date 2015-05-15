@@ -3,7 +3,7 @@
 
 class AddReplytoColumn < ActiveRecord::Migration
   def up
-    add_column :records, :replyto, :limit => 8
+    add_column :records, :replyto, :integer, :limit => 8
   end
 
   def change
