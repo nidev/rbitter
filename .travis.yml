@@ -11,5 +11,6 @@ env: LANG="en_US.UTF-8" LC_ALL="en_US.UTF-8"
 
 matrix:
   allow_failures:
-    - rvm: ruby-head
-    - rvm: rbx-2
+    rvm:
+    - ruby-head
+    - rbx-2
