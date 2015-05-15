@@ -34,7 +34,6 @@ module Rbitter
 
       @dt = DLThread.new(
         Rbitter['media_downloader']['download_dir'],
-        Rbitter['media_downloader']['cacert_path'],
         Rbitter['media_downloader']['large_image'])
     end
 

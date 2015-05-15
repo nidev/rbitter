@@ -5,18 +5,12 @@ require "openssl"
 
 module Rbitter
   class DLThread
-    def initialize(dlfolder, cacert_path, large_flag)
+    def initialize(dlfolder, large_flag)
       @dest = dlfolder
       if not File.directory?(dlfolder)
         warn "[dlthread] Given download location is not available for downloading."
         warn "[dlthread] Fallback to current directory."
         @dest = "./"
-      end
-
-      @cacert = cacert_path
-
-      unless File.exist?(@cacert)
-        fail StandardError, "Can not load ca-certificate file from #{cacert_path}"
       end
 
       if large_flag.nil?
