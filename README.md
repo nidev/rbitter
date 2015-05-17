@@ -30,6 +30,11 @@ Put your customized config.json to one of below locations.
 1. ./config.json (current folder)
 2. ./.rbitter/config.json (current folder)
 
+### XMLRPC handlers ###
+To get XMLRPC handlers, visit [Rbitter XMLRPC](https://github.com/nidev/rbitter-rpchandles).
+
+You can find the document to write your own XMLRPC handler.
+
 ## Set up and run ##
 With config.json,
 
@@ -42,9 +47,6 @@ With config.json,
 ```bash
 $ rbitter serve
 ```
-## XMLRPC API ##
-
-See XMLRPC.md
 
 ## TODO ##
 * Streaming Client
