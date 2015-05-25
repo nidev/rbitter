@@ -86,6 +86,17 @@ module Rbitter
       mark(LOG_ERROR, "Errored (#{exception_string}, #{err_msg}")
     end
 
+    def resurrect_loop?
+      if Rbitter.env['twitter']['connection']['reconnect']
+        puts "[rbitter] Try to reconnect..."
+        sleep Rbitter.env['twitter']['connection']['timeout_secs']
+        true
+      else
+        puts "[rbitter] Give up!"
+        false
+      end
+    end
+
     def main_loop(streaming_adapter = Rbitter::StreamClient)
       xmlrpcd_start if Rbitter['xmlrpc']['enable']
 
@@ -94,7 +105,7 @@ module Rbitter
       begin
         mark_init
 
-        streaming_adapter.new(Rbitter['twitter'].dup).run { |a|
+        streaming_adapter.new(Rbitter['twitter']).run { |a|
           @dt << a['media_urls']
 
           record = Record.find_or_initialize_by(tweetid: a['tweetid'])
@@ -124,17 +135,17 @@ module Rbitter
       rescue Twitter::Error::ServerError => e
         puts "Service unavailable now. Retry in 5 seconds..."
         mark_error(e.to_s, "(retry) Twitter server unavailable / Timeout")
-        sleep 5
-        retry
+
+        retry if resurrect_loop?
       rescue Resolv::ResolvError, Errno::ECONNABORTED,
         Errno::ECONNREFUSED, Errno::ECONNRESET => e
         puts "Network problem. Retry in 5 seconds..."
         mark_error(e.to_s, "(retry) Network problem")
-        sleep 5
-        retry
+
+        retry if resurrect_loop?
       rescue Twitter::Error => e
         warn "Twitter Error: #{e.inspect}"
-        warn "Main loop of ArcServer halted due to Twitter::Error"
+        warn "Rbitter halts due to Twitter::Error"
         mark_error(e.to_s, "(exit) Twitter Error")
       ensure
         xmlrpcd_stop if Rbitter['xmlrpc']['enable']
