@@ -5,7 +5,11 @@ module Rbitter
     "consumer_key": "",
     "consumer_secret": "",
     "access_token": "",
-    "access_token_secret": ""
+    "access_token_secret": "",
+    "connection": {
+      "reconnect": true,
+      "timeout_secs": 5
+    }
   },
   "activerecord": "sqlite3",
   "sqlite3": {

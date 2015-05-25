@@ -53,10 +53,24 @@ describe Rbitter do
     end
   end
 
-  context 'when env_validator validates loaded configuration' do
-    # TODO: Perform test with spec/config/default.json
-    # TODO: Adding configuration validator on env.rb
-  end
+  context "when 'env_valid?' validates loaded configuration" do
+    before(:all) do
+      Rbitter.bootstrap(['configure'])
+      expect(File.file?('config.json')).to be(true)
+    end
 
-  # TODO: Perform test with spec/config/default.json
+    it 'gets \'false\' for empty configuration' do
+      Rbitter.env_reset
+      expect(Rbitter.env_valid?).to be(false)
+    end
+
+    it "gets \'true\' with default and another default" do
+      Rbitter.config_initialize
+      expect(Rbitter.env_valid?).to be(true)
+    end
+
+    after(:all) do
+      File.delete('config.json')
+    end
+  end
 end

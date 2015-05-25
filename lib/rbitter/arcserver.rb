@@ -15,10 +15,16 @@ module Rbitter
     LOG_NORMAL = 0
     LOG_INIT = 1
     LOG_HALT = 2
+    LOG_ERROR = 4
 
     def initialize(xmlrpcd_class = Rbitter::RPCServer)
       @xmlrpcd_class = xmlrpcd_class
+      @dt = DLThread.new(
+        Rbitter['media_downloader']['download_dir'],
+        Rbitter['media_downloader']['large_image'])
+    end
 
+    def arsupport_init
       ARSupport.connect_database
 
       if not ARSupport.prepared?
@@ -31,10 +37,6 @@ module Rbitter
       end
 
       ARSupport.update_database_scheme
-
-      @dt = DLThread.new(
-        Rbitter['media_downloader']['download_dir'],
-        Rbitter['media_downloader']['large_image'])
     end
 
     def xmlrpcd_start
@@ -72,19 +74,25 @@ module Rbitter
         :fav_count => 0})
     end
 
-    def write_init_marker
+    def mark_init
       mark(LOG_INIT, "Archiving service started")
     end
 
-    def write_halt_marker
+    def mark_halt
       mark(LOG_HALT, "Archiving service halted")
+    end
+
+    def mark_error(exception_string, err_msg)
+      mark(LOG_ERROR, "Errored (#{exception_string}, #{err_msg}")
     end
 
     def main_loop(streaming_adapter = Rbitter::StreamClient)
       xmlrpcd_start if Rbitter['xmlrpc']['enable']
 
+      arsupport_init
+
       begin
-        write_init_marker
+        mark_init
 
         streaming_adapter.new(Rbitter['twitter'].dup).run { |a|
           @dt << a['media_urls']
@@ -106,24 +114,33 @@ module Rbitter
       rescue Interrupt => e
         puts ""
         puts "Interrupted..."
+        mark_error(e.to_s, "(exit) SIGINT - interrupted by user")
       rescue Twitter::Error::Unauthorized => e
         warn "Twitter access unauthorized:"
         warn "  Possible solutions"
         warn "  1. Configure Twitter token on config.json"
         warn "  2. Check system time (Time is important on authentication)"
         warn "  3. Check Twitter account status"
-      rescue Twitter::Error::ServerError, Resolv::ResolvError => e
-        puts "Service unavailable now. Retry in 5 second..."
+      rescue Twitter::Error::ServerError => e
+        puts "Service unavailable now. Retry in 5 seconds..."
+        mark_error(e.to_s, "(retry) Twitter server unavailable / Timeout")
+        sleep 5
+        retry
+      rescue Resolv::ResolvError, Errno::ECONNABORTED,
+        Errno::ECONNREFUSED, Errno::ECONNRESET => e
+        puts "Network problem. Retry in 5 seconds..."
+        mark_error(e.to_s, "(retry) Network problem")
         sleep 5
         retry
       rescue Twitter::Error => e
         warn "Twitter Error: #{e.inspect}"
-        warn "Main loop of ArcServer halted."
+        warn "Main loop of ArcServer halted due to Twitter::Error"
+        mark_error(e.to_s, "(exit) Twitter Error")
       ensure
         xmlrpcd_stop if Rbitter['xmlrpc']['enable']
         @dt.job_cleanup
 
-        write_halt_marker
+        mark_halt
       end
     end
   end
