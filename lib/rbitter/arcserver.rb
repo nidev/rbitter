@@ -39,6 +39,10 @@ module Rbitter
       ARSupport.update_database_scheme
     end
 
+    def arsupport_halt
+      ARSupport.disconnect_database
+    end
+
     def xmlrpcd_start
       if Rbitter['xmlrpc']['enable']
         @rpc_service = Thread.new {
@@ -153,6 +157,9 @@ module Rbitter
 
         mark_halt
       end
+
+      arsupport_halt
     end
+
   end
 end

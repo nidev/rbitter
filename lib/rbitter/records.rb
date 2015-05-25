@@ -63,6 +63,12 @@ module ARSupport
     end
   end
 
+  def disconnect_database
+    if ActiveRecord::Base.connected?
+      ActiveRecord::Base.connection.close
+    end
+  end
+
   def update_database_scheme
     current_version = ActiveRecord::Migrator.current_version
     if current_version < SCHEME_VERSION
