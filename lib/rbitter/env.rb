@@ -105,7 +105,7 @@ module Rbitter
       open(location, 'r') { |file|
         @@env = JSON.parse(file.read)
       }
-      break if env_valid?
+      break unless @@env.empty?
     end
 
     fail ConfigFileError, "No config.json on #{locations.join(' or ')}" if @@env.empty?
