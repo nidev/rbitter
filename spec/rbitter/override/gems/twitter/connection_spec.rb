@@ -1,5 +1,5 @@
 # encoding: utf-8
-require "rbitter/libtwitter_connection_override"
+require "rbitter/override/gems/twitter/connection"
 
 describe Rbitter do
   it 'overrides twitter gem' do

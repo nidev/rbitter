@@ -17,5 +17,6 @@ mkmf.log
 *.gem
 *.json
 *.sqlite
+*.png
 .rbitter
 .rbitter/*
