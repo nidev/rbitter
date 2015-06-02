@@ -26,29 +26,6 @@ module Rbitter
     puts "`- logs     : Show Rbitter internal logs"
   end
 
-  def self.prebootstrap
-    # Due to stalled socket problem, If unpatched twitter gem is installed.
-    # Twitter::Streaming::Connection will be monkey-patched.
-    patch_required = false
-
-    if Twitter::Version.const_defined?(:MAJOR)
-      b5_version = Twitter::Version::MAJOR * 10000
-      + Twitter::Version::MINOR * 100 + Twitter::Version::PATCH
-      if b5_version <= 51400
-        warn "[rbitter] Monkey-patching Twitter::Streaming::Connection"
-        warn "[rbitter] Please upgrade twitter gem to apply streaming read timeout"
-        patch_required = true
-      end
-    else
-      b6_version = Twitter::Version.to_a
-      if b6_version[0] <= 6 and b6_version[1] <= 0 and b6_version[2] <= 0
-        patch_required = true
-      end
-    end
-
-    require "rbitter/libtwitter_connection_override" if patch_required
-  end
-
   def self.bootstrap_configs
     require "rbitter/default/config_json"
 
@@ -61,8 +38,6 @@ module Rbitter
     return nil if args.length < 1
     
     if args[0] == "serve"
-      prebootstrap
-
       Rbitter.config_initialize
       
       archive_server = Rbitter::ArcServer.new

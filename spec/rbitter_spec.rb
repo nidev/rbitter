@@ -22,10 +22,6 @@ describe Rbitter do
       Rbitter.bootstrap(['configure'])
     end
 
-    it 'executes prebootstrap properly' do
-      Rbitter.prebootstrap
-    end
-
     it 'bootstraps nothing when empty ARGV is given'  do
       Rbitter.bootstrap([])
     end
