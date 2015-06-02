@@ -30,7 +30,7 @@ NotImplementedError exception.
 =end
 
 def gem_twitter_patcher
-  require 'rbitter/override/gem/twitter/connection'
+  require 'rbitter/override/gems/twitter/connection'
 end
 
 if Twitter::Version.const_defined?(:MAJOR)
@@ -44,4 +44,4 @@ else
   end
 end
 
-require 'rbitter/override/gem/rubysl-socket/socket' if RUBY_ENGINE == 'rbx'
+require 'rbitter/override/gems/rubysl-socket/socket' if RUBY_ENGINE == 'rbx'

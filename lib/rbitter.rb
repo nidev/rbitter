@@ -6,6 +6,7 @@ require "rbitter/arcserver"
 require "rbitter/env"
 require "rbitter/console"
 require "rbitter/xmlrpc"
+require "rbitter/override"
 
 module Rbitter
   BOOTSTRAP_ARGS = ['configure', 'console', 'help', 'logs', 'serve']
