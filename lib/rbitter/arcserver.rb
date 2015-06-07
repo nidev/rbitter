@@ -9,9 +9,12 @@ require "rbitter/records"
 require "rbitter/streaming"
 require "rbitter/dlthread"
 require "rbitter/xmlrpc"
+require "rbitter/progress"
 
 module Rbitter
   class ArcServer
+    include Progress
+
     LOG_NORMAL = 0
     LOG_INIT = 1
     LOG_HALT = 2
@@ -125,6 +128,7 @@ module Rbitter
             :fav_count => a['fav_count']})
 
           record.save
+          draw "[rbitter] saving tweet: #{a['tweetid']}"
         }
       rescue Interrupt => e
         puts ""
