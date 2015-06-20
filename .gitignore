@@ -20,3 +20,4 @@ mkmf.log
 *.png
 .rbitter
 .rbitter/*
+.ruby-version
