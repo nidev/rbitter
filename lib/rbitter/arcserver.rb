@@ -146,7 +146,7 @@ module Rbitter
 
         retry if resurrect_loop?
       rescue Resolv::ResolvError, Errno::ECONNABORTED,
-        Errno::ECONNREFUSED, Errno::ECONNRESET => e
+        Errno::ECONNREFUSED, Errno::ECONNRESET, Errno::ETIMEDOUT  => e
         puts "Network problem. Retry in 5 seconds..."
         mark_error(e.to_s, "(retry) Network problem")
 
