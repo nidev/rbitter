@@ -114,6 +114,7 @@ module Rbitter
 
         streaming_adapter.new(Rbitter['twitter']).run { |a|
           @dt << a['media_urls']
+          draw "[rbitter] saving @#{a['screen_name']}:#{a['tweetid']}"
 
           record = Record.find_or_initialize_by(tweetid: a['tweetid'])
           record.update({:marker => 0,
@@ -128,7 +129,7 @@ module Rbitter
             :fav_count => a['fav_count']})
 
           record.save
-          draw "[rbitter] saving tweet: #{a['tweetid']}"
+          draw "[rbitter] saved @#{a['screen_name']}:#{a['tweetid']}"
         }
       rescue Interrupt => e
         puts ""
