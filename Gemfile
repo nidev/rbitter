@@ -1,7 +1,12 @@
 source "https://rubygems.org"
 
 group :test do
-  gem 'rspec', '~>3.0'
+  gem 'rspec', '~>3.3'
+  gem 'rspec-core', '~>3.3'
+  gem 'rspec-expectations', '~>3.3'
+  gem 'rspec-mocks', '~>3.3'
+  gem 'rspec-support', '~>3.3'
+
   gem 'simplecov', :require => false, :group => :test
   gem 'coveralls', :require => false
 end
