@@ -23,7 +23,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'twitter', '~> 5.14'
   spec.add_dependency 'json', '~> 1.7'
   spec.add_dependency 'ripl', '~> 0.7'
-  spec.add_dependency 'activerecord', '~> 4.0'
+  spec.add_dependency 'activerecord', '~> 4.2'
 
   if RUBY_PLATFORM == 'java'
     spec.platform = 'java'
