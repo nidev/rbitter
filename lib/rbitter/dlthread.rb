@@ -5,6 +5,8 @@ require "openssl"
 
 module Rbitter
   class DLThread
+    MAX_THREADS = 20
+
     def initialize(dlfolder, large_flag)
       @dest = dlfolder
       if not File.directory?(dlfolder)
@@ -23,7 +25,7 @@ module Rbitter
     end
 
     def <<(url_array)
-      download_task = Thread.new {
+      download_task = Thread.new do
         url_array.each { |url|
           uri = URI.parse(@large_image ? url + ":large" : url) 
           ssl = uri.scheme.downcase == 'https'
@@ -43,7 +45,11 @@ module Rbitter
             }
           }
         }
-      }
+      end
+
+      if @pool.length >= MAX_THREADS
+	job_cleanup
+      end
 
       @pool.push download_task
     end
