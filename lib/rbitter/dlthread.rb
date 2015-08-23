@@ -35,20 +35,25 @@ module Rbitter
         url_array.each { |url|
           uri = URI.parse(@large_image ? url + ":large" : url) 
 
-          Net::HTTP.start(uri.host, uri.port, :use_ssl => uri.scheme.downcase == 'https') { |h|
-            req = Net::HTTP::Get.new uri.request_uri
-            h.request(req) { |res|
-              case res
-              when Net::HTTPOK
-                fname = File.basename(url)
+          begin
+            Net::HTTP.start(uri.host, uri.port, :use_ssl => uri.scheme.downcase == 'https') { |h|
+              req = Net::HTTP::Get.new uri.request_uri
+              h.request(req) { |res|
+                case res
+                when Net::HTTPOK
+                  fname = File.basename(url)
 
-                puts "[fetch] remote: #{uri.path} => local: #{fname}"
-                open(File.join(@dest, fname), "wb") { |file|
-                  res.read_body { |chunk| file.write(chunk) }
-                }
-              end
+                  puts "[fetch] remote: #{uri.path} => local: #{fname}"
+                  open(File.join(@dest, fname), "wb") { |file|
+                    res.read_body { |chunk| file.write(chunk) }
+                  }
+                end
+              }
             }
-          }
+          rescue => e
+            puts "[dlthread] exception"
+            puts e.inspect
+          end
         }
       end
 
@@ -58,8 +63,7 @@ module Rbitter
     def job_cleanup
       until @pool.empty?
         dlthrd = @pool.shift
-        
-        puts "[dlthread] Finishing thread [remains: #{@pool.length}]"
+
         if dlthrd.join(5).nil?
           puts "[dlthread] #{dlthrd.to_s} is still running. (timeout: 5sec)"
         end
