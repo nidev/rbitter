@@ -28,7 +28,7 @@ module Rbitter
       if @pool.length >= MAX_THREADS
         job_cleanup
       else
-        puts "[dlthread] Finishing thread [remains: #{@pool.length}]"
+        puts "[dlthread] Stacked threads: #{@pool.length}"
       end
 
       download_task = Thread.new do
