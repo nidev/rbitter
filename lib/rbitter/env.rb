@@ -63,7 +63,7 @@ module Rbitter
     # Level: warning since it is not utilized at all.
     currents.each { |conf|
       unless defaults.include?(conf)
-        warn "[config.json] Unused config: #{conf}. You can safely remove it."
+        warn "[config.json] Unsupported field: #{conf}"
       end
     }
 
@@ -71,7 +71,7 @@ module Rbitter
     # Level: error and program should stop. (return false for this)
     defaults.each { |conf|
       unless currents.include?(conf)
-        warn "[config.json] Config not found: #{conf}. Invalid configuration!"
+        warn "[config.json] Error! Missing field: #{conf}"
         not_errored = false
       end
     }
@@ -88,9 +88,9 @@ module Rbitter
         }
 
         return @@env if env_valid?
-        fail StandardError, "Invalid configuration"
+        fail StandardError, "Void configuration. Maybe failure on load?"
       rescue => e
-        fail ConfigFileError, "Load Failure (#{json_path}): #{e.to_s}"
+        fail ConfigFileError, "Config error on (#{json_path}): #{e.to_s}"
       end
     end
 
@@ -111,6 +111,6 @@ module Rbitter
     fail ConfigFileError, "No config.json on #{locations.join(' or ')}" if @@env.empty?
     fail ConfigFileError, "Configuration outdated. Please see above messages to update it" if not env_valid?
 
-    puts "[config.json] Loaded configuration is valid. good to go!"
+    puts "[config.json] JSON data structure is safe to go."
   end
 end
