@@ -27,8 +27,6 @@ module Rbitter
     def <<(url_array)
       if @pool.length >= MAX_THREADS
         job_cleanup
-      else
-        puts "[dlthread] Stacked threads: #{@pool.length}"
       end
 
       download_task = Thread.new do
@@ -51,8 +49,7 @@ module Rbitter
               }
             }
           rescue => e
-            puts "[dlthread] exception"
-            puts e.inspect
+            puts "[dlthread] exception from thread -> #{e.to_s}"
           end
         }
       end
