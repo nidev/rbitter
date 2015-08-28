@@ -47,7 +47,10 @@ module ARSupport
           timeout: 10000) # Long timeout for slow computer
       end
     elsif Rbitter['activerecord'] == 'mysql2'
-      Jdbc::MySQL.load_driver if RUBY_PLATFORM == 'java'
+      if RUBY_PLATFORM == 'java'
+        require 'jdbc/mysql'
+        Jdbc::MySQL.load_driver
+      end
       
       ActiveRecord::Base.establish_connection(
         adapter: (RUBY_PLATFORM == 'java' ? 'jdbcmysql' : 'mysql2'),
