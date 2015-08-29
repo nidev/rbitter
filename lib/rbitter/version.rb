@@ -1,6 +1,6 @@
 module Rbitter
   PRODUCT_NAME = "Rbitter"
-  VERSION = "0.2.2"
+  VERSION = "0.2.3"
 
   def major
     VERSION.match(/^([0-9]+)\./)[1]

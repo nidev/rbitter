@@ -10,7 +10,10 @@ module Rbitter
     def draw sentence
       $> << sentence
       if sentence.length < @@last_draw
-        $> << " "*(@@last_draw - sentence.length)
+	clear_char_len = @@last_draw - sentence.length
+	clear_char_len.times {
+	  $> << " "
+	}
       end
       @@last_draw = sentence.length
       putback
