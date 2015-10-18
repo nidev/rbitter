@@ -33,13 +33,14 @@ def gem_twitter_patcher
   require 'rbitter/override/gems/twitter/connection'
 end
 
-if Twitter::Version.const_defined?(:MAJOR)
-  b5_version = Twitter::Version::MAJOR * 10000
-  + Twitter::Version::MINOR * 100 + Twitter::Version::PATCH
-  gem_twitter_patcher if b5_version <= 51400
-else
-  b6_version = Twitter::Version.to_a
-  if b6_version[0] <= 6 and b6_version[1] <= 0 and b6_version[2] <= 0
+
+arr_version = Twitter::Version.to_a
+if arr_version[0] >= 6 # v6
+  if arr_version[1] <= 0 and arr_version[2] <= 0
+    gem_twitter_patcher
+  end
+else # v5
+  if arr_version[1] <= 15
     gem_twitter_patcher
   end
 end
